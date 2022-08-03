@@ -41,7 +41,7 @@ ListeDeListes* createWaiting(void){
     return enAttente;
 }
 
-Immeuble* creataBuilding(int nbFloor, Ascenseur *elevator, ListeDeListes *waiting) {
+Immeuble* createBuilding(int nbFloor, Ascenseur *elevator, ListeDeListes *waiting) {
     Immeuble *immeuble = malloc(sizeof(Immeuble));
     immeuble -> nbredEtages = nbFloor;
     immeuble -> ascenseur = elevator;
