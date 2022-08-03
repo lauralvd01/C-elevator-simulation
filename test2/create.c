@@ -12,6 +12,12 @@ ListeDePersonnes* insertPersonList(Personne *personne, ListeDePersonnes *liste) 
     ListeDePersonnes *newliste = malloc(sizeof(ListeDePersonnes));
     newliste -> tete = personne;
     newliste -> queue = liste;
+    if(personne == NULL & liste == NULL){
+        newliste->longueur = 0;
+    }
+    else{
+        newliste->longueur = liste->longueur+1;
+    }
     return newliste;
 }
 
@@ -19,17 +25,19 @@ Ascenseur* createElevator(int capacity, int actualFloor,ListeDePersonnes *person
     Ascenseur *ascenseur = malloc(sizeof(Ascenseur));
     ascenseur -> capacite = capacity;
     ascenseur -> etageActuel = actualFloor;
-    ascenseur -> transportes = personsIn;
+    if(personsIn->longueur <= capacity){
+        ascenseur -> transportes = personsIn;
+    }
     return ascenseur;
 }
 
 ListeDeListes* createWaiting(void){
     ListeDeListes *enAttente = malloc(sizeof(ListeDeListes));
-    enAttente -> etage0 = insertPersonList(createPerson(0,2),NULL);
-    enAttente -> etage1 = insertPersonList(createPerson(1,2),NULL);
+    enAttente -> etage0 = insertPersonList(createPerson(0,2),insertPersonList(NULL,NULL));
+    enAttente -> etage1 = insertPersonList(createPerson(1,2),insertPersonList(NULL,NULL));
     enAttente -> etage2 = insertPersonList(NULL,NULL);
-    enAttente -> etage3 = insertPersonList(createPerson(3,0),NULL);
-    enAttente -> etage4 = insertPersonList(createPerson(4,3),NULL);
+    enAttente -> etage3 = insertPersonList(createPerson(3,0),insertPersonList(NULL,NULL));
+    enAttente -> etage4 = insertPersonList(createPerson(4,3),insertPersonList(NULL,NULL));
     return enAttente;
 }
 

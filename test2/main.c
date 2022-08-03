@@ -6,19 +6,18 @@
 #define CAPACITE 5
 #define DEPART 0
 
+
 int main() {
     Personne *p = createPerson(1,2);
-    ListeDePersonnes *lst = insertPersonList(p,NULL);
-    Ascenseur *asc = createElevator(3,DEPART,lst);
+    ListeDePersonnes *lst = insertPersonList(p,insertPersonList(NULL,NULL));
+    lst = insertPersonList(createPerson(2,3),lst);
+    lst = insertPersonList(createPerson(4,0),lst);
+    Ascenseur *asc = createElevator(CAPACITE,DEPART,lst);
     ListeDeListes *enAttente = createWaiting();
     Immeuble *immeuble = creataBuilding(NBREDETAGES,asc,enAttente);
 
-    printf("destination de p : %d\n",p->arrivee);
-    printf("currentFloor : %d\n",asc->etageActuel);
-    int i;
-    for (i=0;i<=NBREDETAGES;i++){
-        printf("etage %d : \n",i);
-    }
+    printf("longueur de la liste des transportés (normalement 3) : %d\n",asc->transportes->longueur);
+    printBuilding(immeuble);
 
     return 0;
 }
