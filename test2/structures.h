@@ -40,13 +40,20 @@ ListeDePersonnes* insertPersonList(Personne *personne, ListeDePersonnes *liste);
 Ascenseur* createElevator(int capacity, int actualFloor,ListeDePersonnes *personsIn);
 ListeDeListes* createWaiting(void);
 Immeuble* createBuilding(int nbFloor, Ascenseur *elevator, ListeDeListes *waiting);
+ListeDeListes* createSatisfied(void);
+void insertSatisfied(ListeDePersonnes *news, ListeDeListes *satisfied, int floor);
 
 // Fonctions d'affichage
 void printPerson(Personne* p);
 void printPersonList(ListeDePersonnes* lst);
-void printBuilding(Immeuble *building);
+void printBuilding(Immeuble *building,ListeDeListes *satisfied);
 
 // Fonctionnement de l'ascenseur
-//int determinateDestination(Immeuble *building);
 int tousSatisfaits(ListeDeListes *wait);
+//int determinateDestination(Immeuble *building);
+//Immeuble* moove(Immeuble *building,int destination);
+ListeDePersonnes* exitElevator(Immeuble *building);
+void enterElevator(Immeuble *building);
+
+
 #endif
