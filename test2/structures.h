@@ -18,15 +18,26 @@ typedef struct _Ascenseur {
     ListeDePersonnes *transportes;
 } Ascenseur;
 
+typedef struct _ListeDeListes {
+    ListeDePersonnes *etage0;
+    ListeDePersonnes *etage1;
+    ListeDePersonnes *etage2;
+    ListeDePersonnes *etage3;
+    ListeDePersonnes *etage4;
+} ListeDeListes;
+
 typedef struct _Immeuble {
     int nbredEtages;
     Ascenseur *ascenseur;
-    ListeDePersonnes **enAttente;
+    ListeDeListes *enAttente;
 } Immeuble;
+
 
 Personne* createPerson(int dep, int dest);
 ListeDePersonnes* insertPersonList(Personne *personne, ListeDePersonnes *liste);
 Ascenseur* createElevator(int capacity, int actualFloor,ListeDePersonnes *personsIn);
+ListeDeListes* createWaiting(void);
+Immeuble* creataBuilding(int nbFloor, Ascenseur *elevator, ListeDeListes *waiting);
 
 
 #endif
