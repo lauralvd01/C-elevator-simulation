@@ -12,7 +12,7 @@ ListeDePersonnes* insertPersonList(Personne *personne, ListeDePersonnes *liste) 
     ListeDePersonnes *newliste = malloc(sizeof(ListeDePersonnes));
     newliste -> tete = personne;
     newliste -> queue = liste;
-    if(personne == NULL & liste == NULL){
+    if((personne == NULL) & (liste == NULL)){
         newliste->longueur = 0;
     } 
     else{
