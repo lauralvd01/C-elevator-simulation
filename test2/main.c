@@ -1,6 +1,7 @@
 #include "structures.h"
 #include <stddef.h>
 #include<stdio.h>
+#include<stdlib.h>
 
 #define NBREDETAGES 4 //Pour le moment ne pas changer ce paramètre
 #define CAPACITE 2
@@ -93,8 +94,10 @@ void enterElevator(Immeuble *building){
     int etage = building->ascenseur->etageActuel;
     if(etage == 0){
         while(building->ascenseur->transportes->longueur < building->ascenseur->capacite){
-            ListeDePersonnes *liste = building->ascenseur->transportes;
-            building->ascenseur->transportes = insertPersonList(building->enAttente->etage0->tete,liste); // Le premier en attente rentre dans l'ascenseur
+            ListeDePersonnes *liste;
+            liste = insertPersonList(building->enAttente->etage0->tete, building->ascenseur->transportes); // Le premier en attente rentre dans l'ascenseur
+            building->ascenseur->transportes = realloc(building->ascenseur->transportes,sizeof(liste));
+            building->ascenseur->transportes = liste;
             building->enAttente->etage0->tete = building->enAttente->etage0->queue->tete; // et sort de la liste d'attente de l'étage
             building->enAttente->etage0->queue = building->enAttente->etage0->queue->queue;
             building->enAttente->etage0->longueur -= 1;
