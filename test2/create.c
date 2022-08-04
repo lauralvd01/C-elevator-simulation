@@ -14,7 +14,7 @@ ListeDePersonnes* insertPersonList(Personne *personne, ListeDePersonnes *liste) 
     newliste -> queue = liste;
     if(personne == NULL & liste == NULL){
         newliste->longueur = 0;
-    }
+    } 
     else{
         newliste->longueur = liste->longueur+1;
     }

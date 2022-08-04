@@ -6,6 +6,11 @@
 #define CAPACITE 2
 #define DEPART 0 //Pour le moment ne pas changer ce paramètre
 
+Ascenseur *asc;
+ListeDeListes *wait;
+Immeuble *imm;
+ListeDeListes *sat;
+
 
 int tousSatisfaits(ListeDeListes *wait){
     // DETERMINE S IL Y A ENCORE DES GENS EN ATTENTE DANS L ASCENSEUR OU LES ETAGES
@@ -84,10 +89,12 @@ ListeDePersonnes* exitElevator(Immeuble *building){
 }
 
 void enterElevator(Immeuble *building){
+    // Fait entrer autant de personnes en attente à l'étage visité dans l'ascenseur qu'il y a de place dans celui-ci
     int etage = building->ascenseur->etageActuel;
     if(etage == 0){
         while(building->ascenseur->transportes->longueur < building->ascenseur->capacite){
-            building->ascenseur->transportes = insertPersonList(building->enAttente->etage0->tete,building->ascenseur->transportes); // Le premier en attente rentre dans l'ascenseur
+            ListeDePersonnes *liste = building->ascenseur->transportes;
+            building->ascenseur->transportes = insertPersonList(building->enAttente->etage0->tete,liste); // Le premier en attente rentre dans l'ascenseur
             building->enAttente->etage0->tete = building->enAttente->etage0->queue->tete; // et sort de la liste d'attente de l'étage
             building->enAttente->etage0->queue = building->enAttente->etage0->queue->queue;
             building->enAttente->etage0->longueur -= 1;
@@ -131,10 +138,10 @@ void enterElevator(Immeuble *building){
 int main() {
     // INITIALISATION
     printf("                  SITUATION DE DEPART\n\n");
-    Ascenseur *asc = createElevator(CAPACITE,DEPART,insertPersonList(NULL,NULL));
-    ListeDeListes *wait = createWaiting();
-    Immeuble *imm = createBuilding(NBREDETAGES,asc,wait);
-    ListeDeListes *sat = createSatisfied();
+    asc = createElevator(CAPACITE,DEPART,insertPersonList(NULL,NULL));
+    wait = createWaiting();
+    imm = createBuilding(NBREDETAGES,asc,wait);
+    sat = createSatisfied();
     printBuilding(imm,sat);
 
     int stop = 0;
