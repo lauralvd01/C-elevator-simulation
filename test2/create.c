@@ -40,7 +40,7 @@ ListeDePersonnes* supprimerTeteListe(ListeDePersonnes *liste){
     return new_liste;
 }
 
-Ascenseur* createElevator(int capacite, int etage_actuel,ListeDePersonnes *personnnes_dedans){
+Ascenseur* creerAscenseur(int capacite, int etage_actuel,ListeDePersonnes *personnnes_dedans){
     // Crée un pointeur pointant vers un objet ascenseur et par lui attribue à l'ascenseur sa capacité, son étage, initialise sa destination à l'étage où il se trouve
     // vérifie que la liste de personnes pointée par le dernier argument n'est pas trop longue par rappor à la capacité de l'ascenseur, et lui attribue ce pointeur le cas échéant, comme pointeur pointant vers la liste des personnes transportées par l'ascenseur
     Ascenseur *ascenseur;
@@ -54,7 +54,7 @@ Ascenseur* createElevator(int capacite, int etage_actuel,ListeDePersonnes *perso
 }
 
 
-Immeuble* createBuilding(int nbre_etages, Ascenseur *ascenseur, ListeDePersonnes **en_attente){
+Immeuble* creerImmeuble(int nbre_etages, Ascenseur *ascenseur, ListeDePersonnes **en_attente){
     // Crée un pointeur pointant vers un objet de type Immeuble et par lui attribue à l'objet son nombre d'étages, le pointeur pointant vers son ascenseur et le pointeur correspondant au tableau des pointeurs pointants vers les listes des personnes en attente à chaque étage
     Immeuble *immeuble;
     immeuble = (Immeuble*)malloc(sizeof(Immeuble));

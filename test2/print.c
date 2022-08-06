@@ -1,29 +1,31 @@
 #include "structures.h"
 #include<stdlib.h>
 #include<stdio.h>
+#include<assert.h>
 
 
-void printPerson(Personne* p){
-    printf("(%d%d)",p->depart,p->arrivee);
+void printPersonne(Personne* personne){
+    printf("(%d%d)",personne->depart,personne->arrivee);
     return;
 }
 
-void printPersonList(ListeDePersonnes* lst){
-    // Copie "en profondeur" de la liste pour ne pas l'effacer en l'affichant
-    ListeDePersonnes *liste = insertPersonList(lst->tete,lst->queue);
-    while(liste->longueur != 0){
-        printPerson(liste->tete);
-        liste ->tete = liste ->queue ->tete;
-        liste ->queue = liste ->queue ->queue;
-        liste->longueur -= 1;
+void printListeDePersonnes(ListeDePersonnes* liste){
+    Personne *personne_a_afficher = liste->tete;
+    ListeDePersonnes *suivant = liste->queue;
+
+    while(personne_a_afficher != NULL){
+        printPersonne(personne_a_afficher);
+        personne_a_afficher = suivant->tete; // Passage à la personne désignée comme suivant par la queue
+        suivant = suivant->queue; // Le suivant devient la personne suivant la personne suivante
     }
     return;
 }
 
-void printBuilding(Immeuble *building,ListeDeListes *satisfied){
-    int largeur = building->ascenseur->capacite;
-    int hauteur = building->nbredEtages;
-    int Nasc = building->ascenseur->etageActuel;
+void printImmeuble(Immeuble *immeuble,ListeDePersonnes **satisfaits){
+    int largeur = immeuble->ascenseur->capacite;
+    int hauteur = immeuble->nbredEtages;
+    int etage_asc = immeuble->ascenseur->etageActuel;
+    int nb_occupants = immeuble->ascenseur->transportes->longueur;
 
     printf("N° d'étage  |  ");
     int i;
@@ -37,16 +39,16 @@ void printBuilding(Immeuble *building,ListeDeListes *satisfied){
     for (j=hauteur;j>=0;j--){
         printf("     %d      |  ",j);
 
-        if(j != Nasc){
+        if(j != etage_asc){
             for (i=0;i<largeur;i++){
                 printf("       ");
             }
         }
-        if(j == Nasc){
+        if(j == etage_asc){
             printf(" [ ");
-            printPersonList(building->ascenseur->transportes);
-            if(building->ascenseur->transportes->longueur < largeur){
-                for(i=building->ascenseur->transportes->longueur; i<largeur; i++){
+            printListeDePersonnes(immeuble->ascenseur->transportes);
+            if(nb_occupants < largeur){
+                for(i=nb_occupants; i<largeur; i++){
                     printf("    ");
                 }
             }
@@ -54,26 +56,9 @@ void printBuilding(Immeuble *building,ListeDeListes *satisfied){
         }
 
         printf("  |  ");
-        if(j == 0){
-            printPersonList(building->enAttente->etage0);
-            printPersonList(satisfied->etage0);
-        }
-        if(j == 1){
-            printPersonList(building->enAttente->etage1);
-            printPersonList(satisfied->etage1);
-        }
-        if(j == 2){
-            printPersonList(building->enAttente->etage2);
-            printPersonList(satisfied->etage2);
-        }
-        if(j == 3){
-            printPersonList(building->enAttente->etage3);
-            printPersonList(satisfied->etage3);
-        }
-        if(j == 4){
-            printPersonList(building->enAttente->etage4);
-            printPersonList(satisfied->etage4);
-        }
+        
+        printListeDePersonnes(immeuble->enAttente +i);
+        printListeDePersonnes(satisfaits+i);
         printf("\n");
     }
     return;
