@@ -7,10 +7,13 @@
 #define CAPACITE 2
 #define DEPART 0 //Pour le moment ne pas changer ce paramètre
 
-Ascenseur *asc;
-ListeDeListes *wait;
-Immeuble *imm;
-ListeDeListes *sat;
+ListeDePersonnes *fin;
+Ascenseur *ascenseur;
+ListeDePersonnes *enAttente[];
+ListeDePersonnes *satisfaits[];
+ListeDePersonnes **ptr_enAttente;
+ListeDePersonnes **ptr_satisfaits;
+Immeuble *immeuble;
 
 
 int tousSatisfaits(ListeDeListes *wait){
@@ -139,15 +142,43 @@ void enterElevator(Immeuble *building){
 }
 
 int main() {
-    // INITIALISATION
-    printf("                  SITUATION DE DEPART\n\n");
-    asc = createElevator(CAPACITE,DEPART,insertPersonList(NULL,NULL));
-    wait = createWaiting();
-    imm = createBuilding(NBREDETAGES,asc,wait);
-    sat = createSatisfied();
-    printBuilding(imm,sat);
+    // CONSTANTES
+    fin->longueur = 0;
+    fin->tete = NULL;
+    fin->queue = NULL;
+    // Normalement équivalent à fin = insererTetePseronne(NULL,NULL);
 
-    int stop = 0;
+
+    // INITIALISATION
+
+    // Remplissage du tableau des listes de personnes en attente
+    int i;
+    for(i=0;i<=NBREDETAGES;i++){
+        enAttente[i] = (ListeDePersonnes*)malloc(sizeof(ListeDePersonnes));
+        Personne *personne_i = creerPersonne(i,i);
+        enAttente[i] = insererPersonneListe(personne_i,fin);
+    }
+    ptr_enAttente = (ListeDePersonnes**)calloc(NBREDETAGES+1,sizeof(ListeDePersonnes*));
+    ptr_enAttente = enAttente;
+
+    // Idem pour le tableau des gens satisfaits
+    int j;
+    for(j=0;j<=NBREDETAGES;j++){
+        satisfaits[j] = (ListeDePersonnes*)malloc(sizeof(ListeDePersonnes));
+        satisfaits[j] = fin;
+    }
+    ptr_satisfaits = (ListeDePersonnes**)calloc(NBREDETAGES+1,sizeof(ListeDePersonnes*));
+    ptr_satisfaits = enAttente;
+
+    ascenseur = createElevator(CAPACITE,DEPART,fin);
+    immeuble = createBuilding(NBREDETAGES,ascenseur,ptr_enAttente);
+
+    printf("                  SITUATION DE DEPART\n\n");
+    printBuilding(immeuble,satisfaits);
+
+
+    // LANCEMENT DE L AUTOMATE
+    int stop = 1;
     while(stop == 0){
 
         if((imm->ascenseur->transportes->longueur == 0) & (tousSatisfaits(imm->enAttente) == 1)){
@@ -187,7 +218,7 @@ int main() {
 
     // FIN
     printf("\n\n                  SITUATION FINALE\n\n");
-    printBuilding(imm,sat);
+    printBuilding(immeuble,satisfaits);
     
     return 0;
 }
