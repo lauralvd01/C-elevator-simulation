@@ -15,8 +15,8 @@ void printListeDePersonnes(ListeDePersonnes* liste){
 
     while(personne_a_afficher != NULL){
         printPersonne(personne_a_afficher);
-        personne_a_afficher = suivant->tete; // Passage à la personne désignée comme suivant par la queue
-        suivant = suivant->queue; // Le suivant devient la personne suivant la personne suivante
+        personne_a_afficher = suivant->tete; /* Passage à la personne désignée comme suivant par la queue */
+        suivant = suivant->queue; /* Le suivant devient la personne suivant la personne suivante */
     }
     return;
 }
