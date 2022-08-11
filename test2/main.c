@@ -9,8 +9,6 @@
 
 ListeDePersonnes *fin;
 Ascenseur *ascenseur;
-ListeDePersonnes *enAttente[];
-ListeDePersonnes *satisfaits[];
 ListeDePersonnes **ptr_enAttente;
 ListeDePersonnes **ptr_satisfaits;
 Immeuble *immeuble;
@@ -95,6 +93,10 @@ int main() {
 
     // INITIALISATION
 
+    int n = NBREDETAGES + 1;
+    ListeDePersonnes *enAttente[n];
+    ListeDePersonnes *satisfaits[n];
+    
     // Remplissage du tableau des listes de personnes en attente
     int i;
     for(i=0;i<=NBREDETAGES;i++){
