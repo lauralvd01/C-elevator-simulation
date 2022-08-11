@@ -22,14 +22,14 @@ void printListeDePersonnes(ListeDePersonnes* liste){
 }
 
 void printImmeuble(Immeuble *immeuble,ListeDePersonnes **satisfaits){
-    int largeur = immeuble->ascenseur->capacite;
     int hauteur = immeuble->nbredEtages;
+    int largeur_asc = immeuble->ascenseur->capacite;
     int etage_asc = immeuble->ascenseur->etageActuel;
     int nb_occupants = immeuble->ascenseur->transportes->longueur;
 
     printf("N° d'étage  |  ");
     int i;
-    for (i=0;i<largeur;i++){
+    for (i=0;i<largeur_asc;i++){
         printf("       ");
     }
     printf("  |  En attente\n");
@@ -40,15 +40,15 @@ void printImmeuble(Immeuble *immeuble,ListeDePersonnes **satisfaits){
         printf("     %d      |  ",j);
 
         if(j != etage_asc){
-            for (i=0;i<largeur;i++){
+            for (i=0;i<largeur_asc;i++){
                 printf("       ");
             }
         }
         if(j == etage_asc){
             printf(" [ ");
             printListeDePersonnes(immeuble->ascenseur->transportes);
-            if(nb_occupants < largeur){
-                for(i=nb_occupants; i<largeur; i++){
+            if(nb_occupants < largeur_asc){
+                for(i=nb_occupants; i<largeur_asc; i++){
                     printf("    ");
                 }
             }
@@ -57,8 +57,8 @@ void printImmeuble(Immeuble *immeuble,ListeDePersonnes **satisfaits){
 
         printf("  |  ");
         
-        printListeDePersonnes(immeuble->enAttente +i);
-        printListeDePersonnes(satisfaits+i);
+        printListeDePersonnes(immeuble->enAttente[j]);
+        printListeDePersonnes(satisfaits[j]);
         printf("\n");
     }
     return;

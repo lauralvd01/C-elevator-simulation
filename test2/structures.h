@@ -35,20 +35,20 @@ typedef struct _Immeuble {
 Personne* creerPersonne(int dep, int dest);
 ListeDePersonnes* insererPersonneListe(Personne *new_personne, ListeDePersonnes *liste);
 ListeDePersonnes* supprimerTeteListe(ListeDePersonnes *liste);
-Ascenseur* createElevator(int capacite, int etage_actuel,ListeDePersonnes *personnnes_dedans);
-Immeuble* createBuilding(int nbre_etages, Ascenseur *ascenseur, ListeDePersonnes **en_attente);
+Ascenseur* creerAscenseur(int capacite, int etage_actuel,ListeDePersonnes *personnnes_dedans);
+Immeuble* creerImmeuble(int nbre_etages, Ascenseur *ascenseur, ListeDePersonnes **en_attente);
 
 // Fonctions d'affichage
-void printPerson(Personne* p);
-void printPersonList(ListeDePersonnes* lst);
-void printBuilding(Immeuble *building,ListeDeListes *satisfied);
+void printPersonne(Personne* personne);
+void printListeDePersonnes(ListeDePersonnes* liste);
+void printImmeuble(Immeuble *immeuble,ListeDePersonnes **satisfaits);
 
 // Fonctionnement de l'ascenseur
-int tousSatisfaits(ListeDeListes *wait);
+int tousSatisfaits(ListeDePersonnes **en_attente);
 //int determinateDestination(Immeuble *building);
 //Immeuble* moove(Immeuble *building,int destination);
-ListeDePersonnes* exitElevator(Immeuble *building);
-void enterElevator(Immeuble *building);
+void sortirDelAscenseur(Immeuble *immeuble,ListeDePersonnes **satisfaits);
+void entrerDanslAscenseur(Immeuble *immeuble);
 
 
 #endif

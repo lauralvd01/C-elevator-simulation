@@ -33,8 +33,9 @@ ListeDePersonnes* insererPersonneListe(Personne *new_personne, ListeDePersonnes 
 ListeDePersonnes* supprimerTeteListe(ListeDePersonnes *liste){
     // Détache le dernier maillon ajouté à la liste en ne retournant que le pointeur queue de la liste, pointant vers la suite de la liste
     // et en libérant la mémoire allouée : au pointeur tête de la liste pointant vers la personne supprimée; au pointeur liste pointant vers l'objet de type ListeDePersonnes
+    assert(liste->longueur != 0); // Pour ne pas effacer la liste qui sert de fin
     ListeDePersonnes *new_liste;
-    new_liste = liste->queue;
+    new_liste = liste->queue; // On ne dédie pas d'espace mémoire à cette nouvelle liste car elle va correspondre à la queue de la liste en argument, ayant déjà son espace propre
     free(liste->tete);
     free(liste);
     return new_liste;
@@ -62,58 +63,4 @@ Immeuble* creerImmeuble(int nbre_etages, Ascenseur *ascenseur, ListeDePersonnes 
     immeuble -> ascenseur = ascenseur;
     immeuble -> enAttente = en_attente;
     return immeuble;
-}
-
-ListeDeListes* createSatisfied(void){
-    ListeDeListes *satisfaits = malloc(sizeof(ListeDeListes));
-    satisfaits -> etage0 = insertPersonList(NULL,NULL);
-    satisfaits -> etage1 = insertPersonList(NULL,NULL);
-    satisfaits -> etage2 = insertPersonList(NULL,NULL);
-    satisfaits -> etage3 = insertPersonList(NULL,NULL);
-    satisfaits -> etage4 = insertPersonList(NULL,NULL);
-    return satisfaits;
-}
-
-void insertSatisfied(ListeDePersonnes *news, ListeDeListes *satisfied, int floor){
-    if(floor == 0){
-        while(news->longueur != 0){
-            satisfied->etage0 = insertPersonList(news->tete,satisfied->etage0);
-            news->tete = news->queue->tete;
-            news->queue = news->queue->queue;
-            news->longueur -= 1;
-        }
-    }
-    if(floor == 1){
-        while(news->longueur != 0){
-            satisfied->etage1 = insertPersonList(news->tete,satisfied->etage1);
-            news->tete = news->queue->tete;
-            news->queue = news->queue->queue;
-            news->longueur -= 1;
-        }
-    }
-    if(floor == 2){
-        while(news->longueur != 0){
-            satisfied->etage2 = insertPersonList(news->tete,satisfied->etage2);
-            news->tete = news->queue->tete;
-            news->queue = news->queue->queue;
-            news->longueur -= 1;
-        }
-    }
-    if(floor == 3){
-        while(news->longueur != 0){
-            satisfied->etage3 = insertPersonList(news->tete,satisfied->etage3);
-            news->tete = news->queue->tete;
-            news->queue = news->queue->queue;
-            news->longueur -= 1;
-        }
-    }
-    if(floor == 4){
-        while(news->longueur != 0){
-            satisfied->etage4 = insertPersonList(news->tete,satisfied->etage4);
-            news->tete = news->queue->tete;
-            news->queue = news->queue->queue;
-            news->longueur -= 1;
-        }
-    }
-    return;
 }

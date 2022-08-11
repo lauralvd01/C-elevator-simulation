@@ -16,37 +16,15 @@ ListeDePersonnes **ptr_satisfaits;
 Immeuble *immeuble;
 
 
-int tousSatisfaits(ListeDeListes *wait){
+int tousSatisfaits(ListeDePersonnes **en_attente){
     // DETERMINE S IL Y A ENCORE DES GENS EN ATTENTE DANS L ASCENSEUR OU LES ETAGES
 
     int yes = 1; //Plus personne en attente ?
     int i;
     for (i=0;i<=NBREDETAGES;i++){
-        if(i == 0){
-            if(wait->etage0->longueur != 0){
+        if(en_attente[i]->longueur != 0){
                 yes = 0; //Certains le sont toujours
             }
-        }
-        else if(i == 1){
-            if(wait->etage1->longueur != 0){
-                yes = 0; //Certains le sont toujours
-            }
-        }
-        else if(i == 2){
-            if(wait->etage2->longueur != 0){
-                yes = 0; //Certains le sont toujours
-            }
-        }
-        else if(i == 3){
-            if(wait->etage3->longueur != 0){
-                yes = 0; //Certains le sont toujours
-            }
-        }
-        else{
-            if(wait->etage4->longueur != 0){
-                yes = 0; //Certains le sont toujours
-            }
-        }
     }
     return yes;
 }
@@ -71,72 +49,38 @@ int tousSatisfaits(ListeDeListes *wait){
 
 //}
 
-ListeDePersonnes* exitElevator(Immeuble *building){
-    int etage = building->ascenseur->etageActuel;
-    ListeDePersonnes *sortants = insertPersonList(NULL,NULL);
-    ListeDePersonnes *transportesActualises = insertPersonList(NULL,NULL);
+void sortirDelAscenseur(Immeuble *immeuble,ListeDePersonnes **satisfaits){
+    // Observe une à une les personnes transportées par l'ascenseur de l'immeuble et les classe selon si elles sortent à l'étage atteint (elles rentrent alors dans la liste des satisfaits) ou si elles restent dans l'ascenseur (liste restants qui devient la nouvelle liste des personnes transportées dans l'ascenseur)
+    Ascenseur *ascenseur = immeuble->ascenseur;
+    int etage = ascenseur->etageActuel;
+    ListeDePersonnes *candidats_sortants = ascenseur->transportes;
+    ListeDePersonnes *restants = insererPersonneListe(NULL,NULL);
 
-    while(building->ascenseur->transportes->longueur != 0){
-        if(building->ascenseur->transportes->tete->arrivee == etage){
-            sortants = insertPersonList(building->ascenseur->transportes->tete,sortants); // La personne dans l'ascenseur sort
+    while(candidats_sortants->longueur != 0){
+        if(candidats_sortants->tete->arrivee == etage){ // La personne en tête de la liste des transportés descend-elle à cet étage ?
+            satisfaits[etage] = insererPersonneListe(candidats_sortants->tete,satisfaits[etage]); // Oui => elle sort de l'ascenseur et rentre dans la liste des gens satisfaits à cet étage
         }
         else{
-            transportesActualises = insertPersonList(building->ascenseur->transportes->tete,transportesActualises); // Sinon elle reste dedans
+            restants = insererPersonneListe(candidats_sortants->tete,restants); // Non => elle reste dedans
         }
-        building->ascenseur->transportes->tete = building->ascenseur->transportes->queue->tete;
-        building->ascenseur->transportes->queue = building->ascenseur->transportes->queue->queue;
-        building->ascenseur->transportes->longueur -= 1;
+        candidats_sortants = supprimerTeteListe(candidats_sortants); // On passe au candidat suivant
     }
-    building->ascenseur->transportes = transportesActualises; // On actualise l'ascenseur
-
-    return sortants;
+    immeuble->ascenseur->transportes = restants; // On actualise l'ascenseur
+    return;
 }
 
-void enterElevator(Immeuble *building){
+void entrerDanslAscenseur(Immeuble *immeuble){
     // Fait entrer autant de personnes en attente à l'étage visité dans l'ascenseur qu'il y a de place dans celui-ci
-    int etage = building->ascenseur->etageActuel;
-    if(etage == 0){
-        while(building->ascenseur->transportes->longueur < building->ascenseur->capacite){
-            ListeDePersonnes *liste;
-            liste = insertPersonList(building->enAttente->etage0->tete, building->ascenseur->transportes); // Le premier en attente rentre dans l'ascenseur
-            building->ascenseur->transportes = realloc(building->ascenseur->transportes,sizeof(liste));
-            building->ascenseur->transportes = liste;
-            building->enAttente->etage0->tete = building->enAttente->etage0->queue->tete; // et sort de la liste d'attente de l'étage
-            building->enAttente->etage0->queue = building->enAttente->etage0->queue->queue;
-            building->enAttente->etage0->longueur -= 1;
-        }
-    }
-    else if(etage == 1){
-        while(building->ascenseur->transportes->longueur < building->ascenseur->capacite){
-            building->ascenseur->transportes = insertPersonList(building->enAttente->etage1->tete,building->ascenseur->transportes); // Le premier en attente rentre dans l'ascenseur
-            building->enAttente->etage1->tete = building->enAttente->etage1->queue->tete; // et sort de la liste d'attente de l'étage
-            building->enAttente->etage1->queue = building->enAttente->etage1->queue->queue;
-            building->enAttente->etage1->longueur -= 1;
-        }
-    }
-    else if(etage == 2){
-        while(building->ascenseur->transportes->longueur < building->ascenseur->capacite){
-            building->ascenseur->transportes = insertPersonList(building->enAttente->etage2->tete,building->ascenseur->transportes); // Le premier en attente rentre dans l'ascenseur
-            building->enAttente->etage2->tete = building->enAttente->etage2->queue->tete; // et sort de la liste d'attente de l'étage
-            building->enAttente->etage2->queue = building->enAttente->etage2->queue->queue;
-            building->enAttente->etage2->longueur -= 1;
-        }
-    }
-    else if(etage == 3){
-        while(building->ascenseur->transportes->longueur < building->ascenseur->capacite){
-            building->ascenseur->transportes = insertPersonList(building->enAttente->etage3->tete,building->ascenseur->transportes); // Le premier en attente rentre dans l'ascenseur
-            building->enAttente->etage3->tete = building->enAttente->etage3->queue->tete; // et sort de la liste d'attente de l'étage
-            building->enAttente->etage3->queue = building->enAttente->etage3->queue->queue;
-            building->enAttente->etage3->longueur -= 1;
-        }
-    }
-    else if(etage == 4){
-        while(building->ascenseur->transportes->longueur < building->ascenseur->capacite){
-            building->ascenseur->transportes = insertPersonList(building->enAttente->etage4->tete,building->ascenseur->transportes); // Le premier en attente rentre dans l'ascenseur
-            building->enAttente->etage4->tete = building->enAttente->etage4->queue->tete; // et sort de la liste d'attente de l'étage
-            building->enAttente->etage4->queue = building->enAttente->etage4->queue->queue;
-            building->enAttente->etage4->longueur -= 1;
-        }
+    Ascenseur *ascenseur = immeuble->ascenseur;
+    int etage = ascenseur->etageActuel;
+    ListeDePersonnes *en_attente_ici = immeuble->enAttente[etage];
+    
+    // Tant qu'il y a de la place dans l'ascenseur et qu'il reste des gens en attente à l'étage
+    while( (ascenseur->transportes->longueur < ascenseur->capacite) & (en_attente_ici->longueur != 0) ){
+        Personne *personne_qui_monte = en_attente_ici->tete;
+        ascenseur->transportes = insererPersonneListe(personne_qui_monte,ascenseur->transportes); // Le premier en attente rentre dans l'ascenseur
+        
+        en_attente_ici = supprimerTeteListe(en_attente_ici); // et sort de la liste d'attente de l'étage
     }
     return;
 }
@@ -170,18 +114,18 @@ int main() {
     ptr_satisfaits = (ListeDePersonnes**)calloc(NBREDETAGES+1,sizeof(ListeDePersonnes*));
     ptr_satisfaits = enAttente;
 
-    ascenseur = createElevator(CAPACITE,DEPART,fin);
-    immeuble = createBuilding(NBREDETAGES,ascenseur,ptr_enAttente);
+    ascenseur = creerAscenseur(CAPACITE,DEPART,fin);
+    immeuble = creerImmeuble(NBREDETAGES,ascenseur,ptr_enAttente);
 
     printf("                  SITUATION DE DEPART\n\n");
-    printBuilding(immeuble,satisfaits);
+    printImmeuble(immeuble,satisfaits);
 
 
     // LANCEMENT DE L AUTOMATE
     int stop = 1;
     while(stop == 0){
 
-        if((imm->ascenseur->transportes->longueur == 0) & (tousSatisfaits(imm->enAttente) == 1)){
+        if((immeuble->ascenseur->transportes->longueur == 0) & (tousSatisfaits(immeuble->enAttente) == 1)){
             stop = 1;
         }
 
@@ -189,13 +133,12 @@ int main() {
         for(dest=DEPART;dest<=NBREDETAGES;dest++){
             //L'ascenseur monte, dépose et récupère à chaque étage, jusqu'à être arrivé en haut
             printf("\n");
-            imm->ascenseur->etageActuel = dest;
-            ListeDePersonnes *sortants = exitElevator(imm); //Ceux dans l'ascenseur qui veulent sortir à cet étage sortent de l'ascenseur puis
-            insertSatisfied(sortants,sat,dest); // entrent dans la liste des gens satisfaits de l'étage
+            immeuble->ascenseur->etageActuel = dest;
+            sortirDelAscenseur(immeuble,satisfaits); //Ceux dans l'ascenseur qui veulent sortir à cet étage sortent de l'ascenseur et entrent dans la liste des gens satisfaits de l'étage
 
-            enterElevator(imm); //S'il y a de la place dans l'ascenseur, le maximum de gens en attente y rentrent et sorte de la liste d'attente de l'étage
-            imm->ascenseur->destination = dest+1;
-            printBuilding(imm,sat);
+            entrerDanslAscenseur(immeuble); //S'il y a de la place dans l'ascenseur, le maximum de gens en attente y rentrent et sorte de la liste d'attente de l'étage
+            immeuble->ascenseur->destination = dest+1;
+            printImmeuble(immeuble,satisfaits);
             break;
         }
 
@@ -203,13 +146,12 @@ int main() {
             break;
             //L'ascenseur descend, dépose et récupère à chaque étage, jusqu'à être arrivé en bas
             printf("\n");
-            imm->ascenseur->etageActuel = dest;
-            ListeDePersonnes *sortants = exitElevator(imm); //Ceux dans l'ascenseur qui veulent sortir à cet étage sortent de l'ascenseur puis
-            insertSatisfied(sortants,sat,dest); // entrent dans la liste des gens satisfaits de l'étage
+            immeuble->ascenseur->etageActuel = dest;
+            sortirDelAscenseur(immeuble,satisfaits); //Ceux dans l'ascenseur qui veulent sortir à cet étage sortent de l'ascenseur et entrent dans la liste des gens satisfaits de l'étage
 
-            enterElevator(imm); //S'il y a de la place dans l'ascenseur, le maximum de gens en attente y rentrent et sorte de la liste d'attente de l'étage
-            imm->ascenseur->destination = dest-1;
-            printBuilding(imm,sat);
+            entrerDanslAscenseur(immeuble); //S'il y a de la place dans l'ascenseur, le maximum de gens en attente y rentrent et sorte de la liste d'attente de l'étage
+            immeuble->ascenseur->destination = dest-1;
+            printImmeuble(immeuble,satisfaits);
         }
 
 
@@ -218,7 +160,26 @@ int main() {
 
     // FIN
     printf("\n\n                  SITUATION FINALE\n\n");
-    printBuilding(immeuble,satisfaits);
+    printImmeuble(immeuble,satisfaits);
     
+
+    // NETTOYAGE DE LA MEMOIRE
+
+    int k;
+    for(k=0;k<=NBREDETAGES;k++){
+        while((immeuble->enAttente[k])->tete != NULL){
+            immeuble->enAttente[k] = supprimerTeteListe(immeuble->enAttente[k]);
+        }
+        while((satisfaits[k])->tete != NULL){
+            satisfaits[k] = supprimerTeteListe(satisfaits[k]);
+        }
+    }
+    while(immeuble->ascenseur->transportes->tete != NULL){
+            immeuble->ascenseur->transportes = supprimerTeteListe(immeuble->ascenseur->transportes);
+    }
+    free(immeuble->ascenseur);
+    free(immeuble);
+    free(fin);
+
     return 0;
 }
