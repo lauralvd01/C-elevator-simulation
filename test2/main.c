@@ -49,10 +49,15 @@ int tousSatisfaits(ListeDePersonnes **en_attente){
 
 void sortirDelAscenseur(Immeuble *immeuble,ListeDePersonnes **satisfaits){
     // Observe une à une les personnes transportées par l'ascenseur de l'immeuble et les classe selon si elles sortent à l'étage atteint (elles rentrent alors dans la liste des satisfaits) ou si elles restent dans l'ascenseur (liste restants qui devient la nouvelle liste des personnes transportées dans l'ascenseur)
+    ListeDePersonnes *fin;
+    fin->longueur = 0;
+    fin->tete = NULL;
+    fin->queue = NULL;
+    
     Ascenseur *ascenseur = immeuble->ascenseur;
     int etage = ascenseur->etageActuel;
     ListeDePersonnes *candidats_sortants = ascenseur->transportes;
-    ListeDePersonnes *restants = insererPersonneListe(NULL,NULL);
+    ListeDePersonnes *restants = fin;
 
     while(candidats_sortants->longueur != 0){
         if(candidats_sortants->tete->arrivee == etage){ // La personne en tête de la liste des transportés descend-elle à cet étage ?
@@ -94,8 +99,8 @@ int main() {
     // INITIALISATION
 
     int n = NBREDETAGES + 1;
-    ListeDePersonnes *enAttente[n];
-    ListeDePersonnes *satisfaits[n];
+    ListeDePersonnes* enAttente[n];
+    ListeDePersonnes* satisfaits[n];
     
     // Remplissage du tableau des listes de personnes en attente
     int i;
