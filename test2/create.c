@@ -34,11 +34,10 @@ ListeDePersonnes* supprimerTeteListe(ListeDePersonnes *liste){
     /* Détache le dernier maillon ajouté à la liste en ne retournant que le pointeur queue de la liste, pointant vers la suite de la liste
        et en libérant la mémoire allouée : au pointeur tête de la liste pointant vers la personne supprimée; au pointeur liste pointant vers l'objet de type ListeDePersonnes */
     assert(liste->longueur != 0); /* Pour ne pas effacer la liste qui sert de fin */
-    ListeDePersonnes *new_liste;
-    new_liste = liste->queue; /* On ne dédie pas d'espace mémoire à cette nouvelle liste car elle va correspondre à la queue de la liste en argument, ayant déjà son espace propre */
     free(liste->tete);
-    free(liste);
-    return new_liste;
+    liste = realloc(liste,sizeof(liste->queue));
+    liste = liste->queue;
+    return liste;
 }
 
 Ascenseur* creerAscenseur(int capacite, int etage_actuel,ListeDePersonnes *personnnes_dedans){
