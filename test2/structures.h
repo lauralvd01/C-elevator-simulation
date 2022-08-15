@@ -25,7 +25,7 @@ typedef struct _Ascenseur {
 
 typedef struct _Immeuble {
     /* Un immeuble est défini par son nombre d'étages, un ascenseur, et un double pointeur enAttente qui correspond à un tableau de pointeurs pointant chacun sur une liste de personnes (une liste par étage) */
-    int nbredEtages;
+    int nbredEtages; /* NBREDETAGES = 5 => 4 étages et 1 rez-de-chaussée */
     Ascenseur *ascenseur;
     ListeDePersonnes **enAttente;
 } Immeuble;

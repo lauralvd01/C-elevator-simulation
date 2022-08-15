@@ -36,7 +36,7 @@ void printImmeuble(Immeuble *immeuble,ListeDePersonnes **satisfaits){
 
 
     int j;
-    for (j=hauteur;j>=0;j--){
+    for (j=hauteur-1;j>=0;j--){
         printf("     %d      |  ",j);
 
         if(j != etage_asc){
