@@ -65,28 +65,44 @@ int main() {
     ascenseur = creerAscenseur(CAPACITE,DEPART,fin);
     immeuble = creerImmeuble(NBREDETAGES,ascenseur,ptr_enAttente);
 
-    printf("                  SITUATION DE DEPART\n\n");
+    printf("               SITUATION DE DEPART\n\n");
     printImmeuble(immeuble,satisfaits);
 
 
-    /* LANCEMENT DE L AUTOMATE */
+    /* TESTS */
+    printf("\n\n               TESTS\n\n");
     entrerDanslAscenseur(immeuble);
+    printImmeuble(immeuble,satisfaits);
     immeuble->ascenseur->destination = 2;
     immeuble->ascenseur->etageActuel = 2;
     entrerDanslAscenseur(immeuble);
+    printImmeuble(immeuble,satisfaits);
+    
+    immeuble->ascenseur->destination = 0;
+    immeuble->ascenseur->etageActuel = 0;
+    sortirDelAscenseur(immeuble,satisfaits);
+    printImmeuble(immeuble,satisfaits);
 
+
+    /* COMMENTAIRES */
+/*  Les fonctionnements de entrerDanslAscenseur et sortirDelAscenseur n'ont pas encore été testés
+    maintenant qu'ils peuvent l'être, il est évident qu'ils ont des problèmes
+
+    printListeDePersonnes doit produire une erreur également car quand utilisée dans la fonction sortirDelAscenseur pour afficher des tests, cela produit une Segmentation fault
+*/
+
+    /* LANCEMENT DE L AUTOMATE */
     int stop = 1;
     while(stop == 0){
 
         if((immeuble->ascenseur->transportes->longueur == 0) & (tousSatisfaits(immeuble->enAttente) == 1)){
             stop = 1;
         }
-
         stop = 1;
     }
 
     /* FIN */
-    printf("\n\n                  SITUATION FINALE\n\n");
+    printf("\n\n               SITUATION FINALE\n\n");
     printImmeuble(immeuble,satisfaits);
     
 
@@ -99,12 +115,14 @@ int main() {
             printf("\nen attente :");
             printListeDePersonnes(immeuble->enAttente[k]);
             immeuble->enAttente[k] = supprimerTeteListe(immeuble->enAttente[k]);
+            /* => C'est le free(tete) qui fait tout capoter et affiche free(): double free detected in tcache 2 | make: *** [makefile:4: run] Aborted */
             
         }
         while((satisfaits[k])->tete != NULL){
             printf("\nsatisfaits :");
             printListeDePersonnes(satisfaits[k]);
             satisfaits[k] = supprimerTeteListe(satisfaits[k]);
+            /* => C'est le free(tete) qui fait tout capoter et affiche free(): double free detected in tcache 2 | make: *** [makefile:4: run] Aborted */
         }
     }
 
@@ -116,6 +134,7 @@ int main() {
         printPersonne(liste->tete);
         printf("\nQueue :");
         printListeDePersonnes(liste->queue);
+        /*free(liste->tete);*/ /* => C'est le free(tete) qui fait tout capoter et affiche free(): double free detected in tcache 2 | make: *** [makefile:4: run] Aborted */
         liste = liste->queue;
         /*immeuble->ascenseur->transportes = supprimerTeteListe(immeuble->ascenseur->transportes);*/
         immeuble->ascenseur->transportes = realloc(immeuble->ascenseur->transportes,sizeof(liste));

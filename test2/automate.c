@@ -31,9 +31,19 @@ void sortirDelAscenseur(Immeuble *immeuble,ListeDePersonnes **satisfaits){
             restants = insererPersonneListe(candidats_sortants->tete,restants); /* Non => elle reste dedans */
         }
         candidats_sortants = supprimerTeteListe(candidats_sortants); /* On passe au candidat suivant */
+        
+        /*printListeDePersonnes(restants);
+        printf("\n");
+        printListeDePersonnes(immeuble->ascenseur->transportes);
+        printf("\n\n"); */
+
+        /* => printListeDePersonnes doit produire une erreur également car ce bloc seul produit une Segmentation fault*/
     }
     immeuble->ascenseur->transportes = realloc(immeuble->ascenseur->transportes,sizeof(restants));
     immeuble->ascenseur->transportes = restants; /* On actualise l'ascenseur */
+    printListeDePersonnes(restants);
+    printf("\n");
+    printListeDePersonnes(immeuble->ascenseur->transportes);
     return;
 }
 

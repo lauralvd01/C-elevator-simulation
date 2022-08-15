@@ -61,5 +61,6 @@ void printImmeuble(Immeuble *immeuble,ListeDePersonnes **satisfaits){
         printListeDePersonnes(satisfaits[j]);
         printf("\n");
     }
+    printf("\n\n");
     return;
 }
