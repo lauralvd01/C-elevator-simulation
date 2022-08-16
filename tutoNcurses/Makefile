@@ -1,8 +1,8 @@
-demo : main.o
-	gcc -o demo main.o -lncurses
+demo : premiersPas.o
+	gcc -o demo premiersPas.o -lncurses
 
-main.o : main.c
-	gcc -c main.c
+premiersPas.o : premiersPas.c
+	gcc -c premiersPas.c
 
 run : demo
 	./demo
