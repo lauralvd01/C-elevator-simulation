@@ -1,4 +1,4 @@
-/** Tutoriels pour utiliser Ncurses **/
+/** Tutoriels pour utiliser Ncurses - Partie 1 **/
 
 #include<ncurses.h>
 /* #include<stdio.h> */ /* stdio.h est inclus dans ncurses.h */
