@@ -40,9 +40,9 @@ int main() {
         enAttente[etage] = (ListeDePersonnes*)malloc(sizeof(ListeDePersonnes)); /* Chaque élément du tableau enAttente est un pointeur vers une liste de personnes*/
         enAttente[etage] = insererPersonneListe(NULL,NULL);
 
-        int nbre_personnes; /* Il y aura 6 personnes en attente à chaque étage */
-        for(nbre_personnes = 1; nbre_personnes <= 6; nbre_personnes++){
-            int destination = rand() % (NBREDETAGES-1);
+        int nbre_personnes; /* Il y aura 5 personnes en attente à chaque étage */
+        for(nbre_personnes = 1; nbre_personnes <= 5; nbre_personnes++){
+            int destination = rand() % (NBREDETAGES);
             Personne *ptr_personne = creerPersonne(etage,destination);
             enAttente[etage] = insererPersonneListe(ptr_personne,enAttente[etage]);
         }
@@ -60,7 +60,6 @@ int main() {
     sleep(2);
 
     WINDOW *fenetre = newwin(LINES, COLS, 0, 0);
-    
     wrefresh(fenetre);
     getch();
 
@@ -74,9 +73,15 @@ int main() {
     sleep(2);
     /*displayImmeuble(ptr_immeuble);*/
 
+    for(int i=0;i<NBREDETAGES;i++){
+        displayListeDePersonnes(fenetre,3+i,COLS/2,enAttente[NBREDETAGES-1-i]);
+    }
+    wrefresh(fenetre);
+    getch();
+    sleep(1);
 
     /*** LANCEMENT DE L'AUTOMATE ***/
-    bool run = true;
+    bool run = false;
     while(run){
         int input = wgetch(fenetre);
         if(input == 'q'){
@@ -88,10 +93,8 @@ int main() {
 
                 /** Activation de l'ascenseur **/
                 wclear(fenetre);
-                char desti[20];
-                sprintf(desti,"Destination : %d ",destination);
-                int taille_dest = (int)strlen(desti);
-                mvwprintw(fenetre,LINES -1,COLS -1-taille_dest,desti);
+                int taille_dest = (int)strlen("Destination : 0 ");
+                mvwprintw(fenetre,LINES-2,COLS-1-taille_dest,"Destination : %d ",destination);
                 /*displayImmeuble(ptr_immeuble);
                 wrefresh(fenetre);*/
 

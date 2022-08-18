@@ -1,6 +1,8 @@
 #ifndef STRUCTURES_H
 #define STRUCTURES_H
- 
+
+#include<ncurses.h>
+
 typedef struct _Personne {
     /* Une personne est définie par ses étages de départ et de destination */
     int depart;
@@ -39,8 +41,7 @@ Ascenseur* creerAscenseur(int capacite, int etage_actuel,ListeDePersonnes *perso
 Immeuble* creerImmeuble(int nbre_etages, Ascenseur *ascenseur, ListeDePersonnes **en_attente);
 
 /* Fonctions d'affichage */
-void printPersonne(Personne* personne);
-void printListeDePersonnes(ListeDePersonnes* liste);
+void displayListeDePersonnes(WINDOW *fenetre,int etage,int colomne,ListeDePersonnes* liste);
 void printImmeuble(Immeuble *immeuble,ListeDePersonnes **satisfaits);
 
 /* Fonctionnement de l'ascenseur */

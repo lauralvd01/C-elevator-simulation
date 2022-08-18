@@ -1,26 +1,27 @@
 #include "structures.h"
+
+#include<ncurses.h>
+
 #include<stdlib.h>
 #include<stdio.h>
 #include<assert.h>
  
 
-void printPersonne(Personne* personne){
-    printf("(%d%d)",personne->depart,personne->arrivee);
-    return;
-}
-
-void printListeDePersonnes(ListeDePersonnes* liste){
-    Personne *personne_a_afficher = liste->tete;
-    ListeDePersonnes *suivant = liste->queue;
-
-    while(personne_a_afficher != NULL){
-        printPersonne(personne_a_afficher);
-        personne_a_afficher = suivant->tete; /* Passage à la personne désignée comme suivant par la queue */
-        suivant = suivant->queue; /* Le suivant devient la personne suivant la personne suivante */
+void displayListeDePersonnes(WINDOW *fenetre,int etage,int colomne,ListeDePersonnes* liste){
+    if(liste->longueur == 0){
+        return;
+    }
+    else{
+        /* Affiche la première personne de la liste telle que (12) si 1 est son départ et 2 son arrivée */
+        mvwprintw(fenetre,etage,colomne,"(%d%d)",liste->tete->depart,liste->tete->arrivee);
+        
+        /* On poursuit en affichant la suite de la liste, jusqu'à la fin */
+        colomne = colomne + 4;
+        displayListeDePersonnes(fenetre,etage,colomne,liste->queue);        
     }
     return;
 }
-
+/*
 void printImmeuble(Immeuble *immeuble,ListeDePersonnes **satisfaits){
     int hauteur = immeuble->nbredEtages;
     int largeur_asc = immeuble->ascenseur->capacite;
@@ -63,4 +64,4 @@ void printImmeuble(Immeuble *immeuble,ListeDePersonnes **satisfaits){
     }
     printf("\n\n");
     return;
-}
+}*/

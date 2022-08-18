@@ -1,6 +1,6 @@
 #include "structures.h"
 #include<stdlib.h>
-#include<stdio.h> 
+#include<stdio.h>
 #include<assert.h>
 
 /* int determinateDestination(Immeuble *building){
@@ -41,9 +41,9 @@ void sortirDelAscenseur(Immeuble *immeuble,ListeDePersonnes **satisfaits){
     }
     immeuble->ascenseur->transportes = realloc(immeuble->ascenseur->transportes,sizeof(restants));
     immeuble->ascenseur->transportes = restants; /* On actualise l'ascenseur */
-    printListeDePersonnes(restants);
+    /*displayListeDePersonnes(restants);
     printf("\n");
-    printListeDePersonnes(immeuble->ascenseur->transportes);
+    displayListeDePersonnes(immeuble->ascenseur->transportes);*/
     return;
 }
 
