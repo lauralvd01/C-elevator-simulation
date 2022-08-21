@@ -3,63 +3,68 @@
 #include<stdio.h>
 #include<assert.h>
 
-/* int determinateDestination(Immeuble *building){
-    / DETERMINE LA PROCHAINE DESTINATION DE L ASCENSEUR /
-    int dest;
-    
-    return dest
-} */
 
-/* Immeuble* moove(Immeuble *building,int destination){
-    / EFFECTUE ET AFFICHE LE DEPLACEMENT DE L ASCENSEUR JUSQU A SA DESTINATION /
+void sortirDelAscenseur(Ascenseur *ptr_ascenseur){
+    /* Observe une à une les personnes transportées par l'ascenseur de l'immeuble et les efface de la liste si elles souhaitent sortir à l'étage atteint*/
 
-} */
+    int etage = ptr_ascenseur->etageActuel;
+    ListeDePersonnes *ptr_danslAscenseur = ptr_ascenseur->transportes;
+    ListeDePersonnes *ptr_restants = insererPersonneListe(NULL,NULL);
 
+    while(ptr_danslAscenseur->longueur != 0){
 
-void sortirDelAscenseur(Immeuble *immeuble,ListeDePersonnes **satisfaits){
-    /* Observe une à une les personnes transportées par l'ascenseur de l'immeuble et les classe selon si elles sortent à l'étage atteint (elles rentrent alors dans la liste des satisfaits) ou si elles restent dans l'ascenseur (liste restants qui devient la nouvelle liste des personnes transportées dans l'ascenseur) */
-    Ascenseur *ascenseur = immeuble->ascenseur;
-    int etage = ascenseur->etageActuel;
-    ListeDePersonnes *candidats_sortants = ascenseur->transportes;
-    ListeDePersonnes *restants = insererPersonneListe(NULL,NULL);
+        Personne *ptr_personneObservee = ptr_danslAscenseur->tete; /* On observe la personne en haut de la pile de celles présentes dans l'ascenseur */
 
-    while(candidats_sortants->longueur != 0){
-        if(candidats_sortants->tete->arrivee == etage){ /* La personne en tête de la liste des transportés descend-elle à cet étage ? */
-            satisfaits[etage] = insererPersonneListe(candidats_sortants->tete,satisfaits[etage]); /* Oui => elle sort de l'ascenseur et rentre dans la liste des gens satisfaits à cet étage */
+        if(ptr_personneObservee->arrivee != etage){ /* La personne en question descend-elle à cet étage ? */
+             ptr_restants = insererPersonneListe(ptr_personneObservee,ptr_restants); /* Non => elle restera dans l'ascenseur */
         }
-        else{
-            restants = insererPersonneListe(candidats_sortants->tete,restants); /* Non => elle reste dedans */
-        }
-        candidats_sortants = supprimerTeteListe(candidats_sortants); /* On passe au candidat suivant */
-        
-        /*printListeDePersonnes(restants);
-        printf("\n");
-        printListeDePersonnes(immeuble->ascenseur->transportes);
-        printf("\n\n"); */
 
-        /* => printListeDePersonnes doit produire une erreur également car ce bloc seul produit une Segmentation fault*/
+        ptr_danslAscenseur = ptr_danslAscenseur->queue; /* On descend dans la pile pour observer les personnes suivantes*/
     }
-    immeuble->ascenseur->transportes = realloc(immeuble->ascenseur->transportes,sizeof(restants));
-    immeuble->ascenseur->transportes = restants; /* On actualise l'ascenseur */
-    /*displayListeDePersonnes(restants);
-    printf("\n");
-    displayListeDePersonnes(immeuble->ascenseur->transportes);*/
+    ptr_ascenseur->transportes = ptr_restants; /* On actualise l'ascenseur */
+
     return;
 }
 
-void entrerDanslAscenseur(Immeuble *immeuble){
-    /* Fait entrer autant de personnes en attente à l'étage visité dans l'ascenseur qu'il y a de place dans celui-ci */
-    Ascenseur *ascenseur = immeuble->ascenseur;
-    int etage = ascenseur->etageActuel;
-    ListeDePersonnes *en_attente_ici = immeuble->enAttente[etage];
-    
-    /* Tant qu'il y a de la place dans l'ascenseur et qu'il reste des gens en attente à l'étage */
-    while( (ascenseur->transportes->longueur < ascenseur->capacite) & (en_attente_ici->longueur != 0) ){
-        Personne *personne_qui_monte = en_attente_ici->tete;
-        ascenseur->transportes = insererPersonneListe(personne_qui_monte,ascenseur->transportes); /* Le premier en attente rentre dans l'ascenseur */
-        en_attente_ici = supprimerTeteListe(en_attente_ici); /* et sort de la liste d'attente de l'étage */
+void entrerDanslAscenseur(WINDOW *fenetre,Immeuble *ptr_immeuble){
+    /* Fait entrer dans l'ascenseur autant de personnes en attente à l'étage atteint qu'il y a de place */
+
+    Ascenseur *ptr_ascenseur = ptr_immeuble->ascenseur;
+    int etage = ptr_ascenseur->etageActuel;
+    int capacite = ptr_ascenseur->capacite;
+
+    ListeDePersonnes *ptr_en_attente_ici = ptr_immeuble->enAttente[etage];
+    int i = 1;
+    displayListeDePersonnes(fenetre,LINES-i,COLS/2,ptr_en_attente_ici);
+    wrefresh(fenetre);
+    i++;
+
+    /* Tant qu'il y a de la place dans l'ascenseur */
+    while(ptr_ascenseur->transportes->longueur < capacite){
+
+        Personne *personne_qui_monte = ptr_en_attente_ici->tete; /* On fait rentrer le premier de la pile d'attente */
+        ptr_ascenseur->transportes = insererPersonneListe(personne_qui_monte,ptr_ascenseur->transportes);
+        displayAscenseur(fenetre,ptr_immeuble);
+        wrefresh(fenetre);
+
+        ptr_en_attente_ici = ptr_en_attente_ici->queue; /* et on le sort de la liste d'attente de l'étage */
+        displayListeDePersonnes(fenetre,LINES-i,COLS/2,ptr_en_attente_ici);
+        wrefresh(fenetre);
+
+        displayAscenseur(fenetre,ptr_immeuble);
+        wrefresh(fenetre);
+
+        int dest = rand() % (ptr_immeuble->nbredEtages);
+        Personne *nouvelle_personne = creerPersonne(etage,dest);
+        ptr_en_attente_ici = insererPersonneListe(nouvelle_personne,ptr_en_attente_ici); /* On ajoute une nouvelle personne à la file d'attente */
+        displayListeDePersonnes(fenetre,LINES-i,COLS/2 - 20,ptr_en_attente_ici);
+        wrefresh(fenetre);
+        i ++;
+
+        displayImmeuble(fenetre,ptr_immeuble);
+        wrefresh(fenetre);
+        getch();
     }
-    immeuble->enAttente[etage] = realloc(immeuble->enAttente[etage],sizeof(en_attente_ici));
-    immeuble->enAttente[etage] = en_attente_ici;
+
     return;
 }

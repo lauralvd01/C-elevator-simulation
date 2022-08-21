@@ -49,8 +49,8 @@ void displayImmeuble(WINDOW *fenetre,Immeuble *immeuble);
 int tousSatisfaits(ListeDePersonnes **en_attente);
 /*int determinateDestination(Immeuble *building);*/
 /*Immeuble* moove(Immeuble *building,int destination);*/
-void sortirDelAscenseur(Immeuble *immeuble,ListeDePersonnes **satisfaits);
-void entrerDanslAscenseur(Immeuble *immeuble);
+void sortirDelAscenseur(Ascenseur *ascenseur);
+void entrerDanslAscenseur(WINDOW *fenetre,Immeuble *immeuble);
 
 
 #endif

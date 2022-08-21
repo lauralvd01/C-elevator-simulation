@@ -70,6 +70,12 @@ int main() {
     wrefresh(fenetre);
     sleep(2);
 
+    Personne *personne = creerPersonne(0,3);
+    ptr_ascenseur->transportes = insererPersonneListe(personne,ptr_ascenseur->transportes);
+
+    personne = creerPersonne(1,4);
+    ptr_ascenseur->transportes = insererPersonneListe(personne,ptr_ascenseur->transportes);
+
     displayImmeuble(fenetre,ptr_immeuble);
     wrefresh(fenetre);
     sleep(1);
@@ -112,22 +118,17 @@ int main() {
                 }
                 displayAscenseur(fenetre,ptr_immeuble);
                 wrefresh(fenetre);
+                sleep(1);
 
-                /*
                 sortirDelAscenseur(ptr_ascenseur);
-
-                ptr_immeuble->ascenseur = ptr_ascenseur;
-                wclear(fenetre);
-                displayImmeuble(ptr_immeuble);
+                displayAscenseur(fenetre,ptr_immeuble);
                 wrefresh(fenetre);
+                sleep(1);
 
-                entrerDanslAscenseur(ptr_immeuble,ptr_ascenseur);
-
-                ptr_immeuble->ascenseur = ptr_ascenseur;
-                wclear(fenetre);
-                displayImmeuble(ptr_immeuble);
+                entrerDanslAscenseur(fenetre,ptr_immeuble);
+                displayImmeuble(fenetre,ptr_immeuble);
                 wrefresh(fenetre);
-                */
+                sleep(1);
             }
         }
     }

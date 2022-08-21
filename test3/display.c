@@ -37,7 +37,7 @@ void displayAscenseur(WINDOW *fenetre,Immeuble *immeuble){
     int niveau = 4+etage_sup-etage_actuel;
 
     mvwprintw(fenetre,niveau,(COLS/2)-11,"[");
-    displayListeDePersonnes(fenetre,niveau,(COLS/2)-2,immeuble->ascenseur->transportes);
+    displayListeDePersonnes(fenetre,niveau,(COLS/2)-9,immeuble->ascenseur->transportes);
     if(etage_actuel == immeuble->ascenseur->destination){
         mvwprintw(fenetre,niveau,(COLS/2)+8,"[");
     }
