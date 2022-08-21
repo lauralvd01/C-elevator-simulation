@@ -1,6 +1,5 @@
 #include "structures.h"
 
-#include<time.h>
 #include<unistd.h>
 #include<ncurses.h>
 
@@ -63,18 +62,11 @@ int main() {
     wrefresh(fenetre);
     getch();
 
-
     wattron(fenetre,A_UNDERLINE);
     mvwprintw(fenetre,1, (COLS / 2) - 13,"SIMULATION D'UN ASCENSEUR");
     wattroff(fenetre,A_UNDERLINE);
     wrefresh(fenetre);
-    sleep(2);
-
-    Personne *personne = creerPersonne(0,3);
-    ptr_ascenseur->transportes = insererPersonneListe(personne,ptr_ascenseur->transportes);
-
-    personne = creerPersonne(1,4);
-    ptr_ascenseur->transportes = insererPersonneListe(personne,ptr_ascenseur->transportes);
+    sleep(1);
 
     displayImmeuble(fenetre,ptr_immeuble);
     wrefresh(fenetre);
@@ -85,6 +77,7 @@ int main() {
     mvwprintw(fenetre,LINES-1,1,"Entrer q pour quitter");
     wattroff(fenetre,A_ITALIC);
     wrefresh(fenetre);
+
 
     /*** LANCEMENT DE L'AUTOMATE ***/
     bool run = true;
@@ -104,7 +97,7 @@ int main() {
                 wrefresh(fenetre);
 
                 ptr_ascenseur->destination = destination;
-                while(ptr_ascenseur->etageActuel != ptr_ascenseur->destination){
+                while(ptr_ascenseur->etageActuel != ptr_ascenseur->destination){ /* Transport de l'ascenseur jusqu'à la destination (pas d'arrêt aux étages entre temps) */
                     
                     if(ptr_ascenseur->etageActuel < destination){
                         ptr_ascenseur->etageActuel += 1;
@@ -120,15 +113,14 @@ int main() {
                 wrefresh(fenetre);
                 sleep(1);
 
-                sortirDelAscenseur(ptr_ascenseur);
+                sortirDelAscenseur(ptr_immeuble);
                 displayAscenseur(fenetre,ptr_immeuble);
                 wrefresh(fenetre);
-                sleep(1);
+                sleep(2);
 
                 entrerDanslAscenseur(fenetre,ptr_immeuble);
                 displayImmeuble(fenetre,ptr_immeuble);
                 wrefresh(fenetre);
-                sleep(1);
             }
         }
     }

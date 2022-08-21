@@ -67,7 +67,7 @@ void displayImmeuble(WINDOW *fenetre,Immeuble *immeuble){
         mvwprintw(fenetre,4+i,bord_gauche-(taille-3)/2,"%d",etage_sup-i);
 
         mvwprintw(fenetre,4+i,bord_gauche,"|");
-        mvwprintw(fenetre,4+i,bord_droit,"|");
+        mvwprintw(fenetre,4+i,bord_droit,"|                         ");
 
         displayListeDePersonnes(fenetre,4+i,bord_droit+2,immeuble->enAttente[etage_sup-i]);
     }

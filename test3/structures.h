@@ -36,7 +36,7 @@ typedef struct _Immeuble {
 /** Fonctions de création **/
 Personne* creerPersonne(int dep, int dest);
 ListeDePersonnes* insererPersonneListe(Personne *new_personne, ListeDePersonnes *liste);
-ListeDePersonnes* supprimerTeteListe(ListeDePersonnes *liste);
+ListeDePersonnes* insererPersonneFile(ListeDePersonnes *liste,Personne *personne);
 Ascenseur* creerAscenseur(int capacite, int etage_actuel,ListeDePersonnes *personnnes_dedans);
 Immeuble* creerImmeuble(int nbre_etages, Ascenseur *ascenseur, ListeDePersonnes **en_attente);
 
@@ -49,7 +49,7 @@ void displayImmeuble(WINDOW *fenetre,Immeuble *immeuble);
 int tousSatisfaits(ListeDePersonnes **en_attente);
 /*int determinateDestination(Immeuble *building);*/
 /*Immeuble* moove(Immeuble *building,int destination);*/
-void sortirDelAscenseur(Ascenseur *ascenseur);
+void sortirDelAscenseur(Immeuble *ptr_immeuble);
 void entrerDanslAscenseur(WINDOW *fenetre,Immeuble *immeuble);
 
 

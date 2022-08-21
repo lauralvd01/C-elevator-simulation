@@ -30,13 +30,19 @@ ListeDePersonnes* insererPersonneListe(Personne *new_personne, ListeDePersonnes 
     return new_liste;
 }
 
-ListeDePersonnes* supprimerTeteListe(ListeDePersonnes *liste){
-    /* Détache le dernier maillon ajouté à la liste en ne retournant que le pointeur queue de la liste, pointant vers la suite de la liste
-       et en libérant la mémoire allouée : au pointeur tête de la liste pointant vers la personne supprimée; au pointeur liste pointant vers l'objet de type ListeDePersonnes */
-    assert(liste->longueur != 0); /* Pour ne pas effacer la liste qui sert de fin */
-    free(liste->tete);
-    liste = realloc(liste,sizeof(liste->queue));
-    liste = liste->queue;
+ListeDePersonnes* insererPersonneFile(ListeDePersonnes *liste,Personne *personne){
+    /* Permet d'utiliser la liste chainée comme une file plutôt qu'une pile : insère la personne à ajouter juste avant la fin de la liste chainée,
+       au lieu de la mettre en tête */
+    ListeDePersonnes *fin = insererPersonneListe(NULL,NULL);
+
+    if(liste->longueur == 0){
+        liste = insererPersonneListe(personne,fin);
+        return liste;
+    }
+    else{
+        liste->longueur ++;
+        liste->queue = insererPersonneFile(liste->queue,personne);
+    }
     return liste;
 }
 
