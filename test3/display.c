@@ -28,12 +28,9 @@ void printImmeuble(Immeuble *immeuble,ListeDePersonnes **satisfaits){
     int etage_asc = immeuble->ascenseur->etageActuel;
     int nb_occupants = immeuble->ascenseur->transportes->longueur;
 
-    printf("N° d'étage  |  ");
-    int i;
-    for (i=0;i<largeur_asc;i++){
-        printf("       ");
-    }
-    printf("  |  En attente\n");
+    printf("N° d'étage  |                "); LIGNE 3 COL COLS/2 - srlen("N° d'étage  |                ")
+    Essayer Reverse ??
+    printf("                |  En attente\n"); LIGNE 3 COL COLS/2
 
 
     int j;

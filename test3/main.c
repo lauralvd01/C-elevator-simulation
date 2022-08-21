@@ -11,7 +11,7 @@
 #include<assert.h>
 
 #define NBREDETAGES 5 /* NBREDETAGES = 5 => 4 étages et 1 rez-de-chaussée */
-#define CAPACITE 3 /* Capatié de l'ascenseur */
+#define CAPACITE 4 /* Capatié de l'ascenseur */
 #define DEPART 0 /* Point dde départ de l'ascenseur */
 
 /** Déclaration des pointeurs **/
@@ -63,19 +63,35 @@ int main() {
     wrefresh(fenetre);
     getch();
 
-    char *msg = "SIMULATION D'UN ASCENSEUR";
-    int taille = (int)strlen(msg);
-    attron(A_BOLD);
-    mvwprintw(fenetre,1, (COLS / 2) - (taille / 2),msg);
-    attroff(A_BOLD);
+
+    wattron(fenetre,A_UNDERLINE);
+    mvwprintw(fenetre,1, (COLS / 2) - 13,"SIMULATION D'UN ASCENSEUR");
+    wattroff(fenetre,A_UNDERLINE);
     wrefresh(fenetre);
     getch();
     sleep(2);
     /*displayImmeuble(ptr_immeuble);*/
 
+    int bord_gauche = (COLS / 2) - 14;
+    int bord_droit = (COLS / 2) + 12;
+    char *msg = "N° d'étage  |";
+    int taille = (int)strlen(msg);
+    wattron(fenetre,A_BOLD);
+    mvwprintw(fenetre, 3, bord_gauche - 12,msg);
+    mvwprintw(fenetre, 3, bord_droit,"|  En attente\n");
+    wattroff(fenetre,A_BOLD);
+    
     for(int i=0;i<NBREDETAGES;i++){
-        displayListeDePersonnes(fenetre,3+i,COLS/2,enAttente[NBREDETAGES-1-i]);
+        mvwprintw(fenetre,4+i,bord_gauche-(taille-3)/2,"%d",NBREDETAGES-1-i);
+        mvwprintw(fenetre,4+i,bord_gauche,"|");
+        mvwprintw(fenetre,4+i,bord_droit,"|");
+        displayListeDePersonnes(fenetre,4+i,bord_droit+2,enAttente[NBREDETAGES-1-i]);
     }
+    msg = "  [ (12)(12)(12)(12) ]  "; // taille = 24
+    /*
+    for(int i=0;i<NBREDETAGES;i++){
+        displayListeDePersonnes(fenetre,4+i,COLS/2,enAttente[NBREDETAGES-1-i]);
+    }*/
     wrefresh(fenetre);
     getch();
     sleep(1);
@@ -122,11 +138,9 @@ int main() {
     }
 
     wclear(fenetre);
-    char *msg_fin = "SIMULATION TERMINEE";
-    int taille_fin = (int)strlen(msg_fin);
-    attron(A_BOLD);
-    mvwprintw(fenetre,1, (COLS / 2) - (taille_fin / 2),msg_fin);
-    attroff(A_BOLD);
+    wattron(fenetre,A_UNDERLINE);
+    mvwprintw(fenetre,2, (COLS / 2) - 11,"SIMULATION TERMINEE");
+    wattroff(fenetre,A_UNDERLINE);
     wrefresh(fenetre);
     sleep(2);
     wclear(fenetre);
