@@ -1,6 +1,7 @@
 #include "structures.h"
 
 #include<ncurses.h>
+#include<string.h>
 
 #include<stdlib.h>
 #include<stdio.h>
@@ -21,44 +22,49 @@ void displayListeDePersonnes(WINDOW *fenetre,int etage,int colomne,ListeDePerson
     }
     return;
 }
-/*
-void printImmeuble(Immeuble *immeuble,ListeDePersonnes **satisfaits){
-    int hauteur = immeuble->nbredEtages;
-    int largeur_asc = immeuble->ascenseur->capacite;
-    int etage_asc = immeuble->ascenseur->etageActuel;
-    int nb_occupants = immeuble->ascenseur->transportes->longueur;
 
-    printf("N° d'étage  |                "); LIGNE 3 COL COLS/2 - srlen("N° d'étage  |                ")
-    Essayer Reverse ??
-    printf("                |  En attente\n"); LIGNE 3 COL COLS/2
+void displayAscenseur(WINDOW *fenetre,Immeuble *immeuble){
+    int etage_sup = immeuble->nbredEtages -1;
+    int etage_actuel = immeuble->ascenseur->etageActuel;
+    int niveau = 4+etage_sup-etage_actuel;
 
-
-    int j;
-    for (j=hauteur-1;j>=0;j--){
-        printf("     %d      |  ",j);
-
-        if(j != etage_asc){
-            for (i=0;i<largeur_asc;i++){
-                printf("       ");
-            }
-        }
-        if(j == etage_asc){
-            printf(" [ ");
-            printListeDePersonnes(immeuble->ascenseur->transportes);
-            if(nb_occupants < largeur_asc){
-                for(i=nb_occupants; i<largeur_asc; i++){
-                    printf("    ");
-                }
-            }
-            printf(" ]");
-        }
-
-        printf("  |  ");
-        
-        printListeDePersonnes(immeuble->enAttente[j]);
-        printListeDePersonnes(satisfaits[j]);
-        printf("\n");
+    mvwprintw(fenetre,niveau,(COLS/2)-11,"[");
+    displayListeDePersonnes(fenetre,niveau,(COLS/2)-2,immeuble->ascenseur->transportes);
+    if(etage_actuel == immeuble->ascenseur->destination){
+        mvwprintw(fenetre,niveau,(COLS/2)+8,"[");
     }
-    printf("\n\n");
+    else{
+        mvwprintw(fenetre,niveau,(COLS/2)+8,"]");
+    }
+
     return;
-}*/
+}
+
+void displayImmeuble(WINDOW *fenetre,Immeuble *immeuble){
+
+    int etage_sup = immeuble->nbredEtages -1;
+    int demi_largeurAscenseur = (immeuble->ascenseur->capacite)*3;
+    int bord_gauche = (COLS / 2) -2 -demi_largeurAscenseur;
+    int bord_droit = (COLS / 2) + demi_largeurAscenseur;
+
+
+    char *msg = "N° d'étage  |";
+    int taille = (int)strlen(msg)-2;
+    wattron(fenetre,A_BOLD);
+    mvwprintw(fenetre, 3, bord_gauche - taille+1,msg);
+    mvwprintw(fenetre, 3, bord_droit,"|  En attente\n");
+    wattroff(fenetre,A_BOLD);
+    
+    for(int i=0;i<=etage_sup;i++){
+        mvwprintw(fenetre,4+i,bord_gauche-(taille-3)/2,"%d",etage_sup-i);
+
+        mvwprintw(fenetre,4+i,bord_gauche,"|");
+        mvwprintw(fenetre,4+i,bord_droit,"|");
+
+        displayListeDePersonnes(fenetre,4+i,bord_droit+2,immeuble->enAttente[etage_sup-i]);
+    }
+
+    displayAscenseur(fenetre,immeuble);
+
+    return;
+}

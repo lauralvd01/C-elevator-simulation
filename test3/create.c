@@ -47,7 +47,7 @@ Ascenseur* creerAscenseur(int capacite, int etage_actuel,ListeDePersonnes *perso
     ascenseur = (Ascenseur*)malloc(sizeof(Ascenseur));
     ascenseur -> capacite = capacite;
     ascenseur -> etageActuel = etage_actuel;
-    ascenseur -> destination = etage_actuel;
+    ascenseur -> destination = -1;
     assert(personnnes_dedans->longueur <= capacite);
     ascenseur -> transportes = personnnes_dedans;
     return ascenseur;

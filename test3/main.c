@@ -70,28 +70,8 @@ int main() {
     wrefresh(fenetre);
     getch();
     sleep(2);
-    /*displayImmeuble(ptr_immeuble);*/
+    displayImmeuble(fenetre,ptr_immeuble);
 
-    int bord_gauche = (COLS / 2) - 14;
-    int bord_droit = (COLS / 2) + 12;
-    char *msg = "N° d'étage  |";
-    int taille = (int)strlen(msg);
-    wattron(fenetre,A_BOLD);
-    mvwprintw(fenetre, 3, bord_gauche - 12,msg);
-    mvwprintw(fenetre, 3, bord_droit,"|  En attente\n");
-    wattroff(fenetre,A_BOLD);
-    
-    for(int i=0;i<NBREDETAGES;i++){
-        mvwprintw(fenetre,4+i,bord_gauche-(taille-3)/2,"%d",NBREDETAGES-1-i);
-        mvwprintw(fenetre,4+i,bord_gauche,"|");
-        mvwprintw(fenetre,4+i,bord_droit,"|");
-        displayListeDePersonnes(fenetre,4+i,bord_droit+2,enAttente[NBREDETAGES-1-i]);
-    }
-    msg = "  [ (12)(12)(12)(12) ]  "; // taille = 24
-    /*
-    for(int i=0;i<NBREDETAGES;i++){
-        displayListeDePersonnes(fenetre,4+i,COLS/2,enAttente[NBREDETAGES-1-i]);
-    }*/
     wrefresh(fenetre);
     getch();
     sleep(1);
