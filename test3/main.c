@@ -68,16 +68,20 @@ int main() {
     mvwprintw(fenetre,1, (COLS / 2) - 13,"SIMULATION D'UN ASCENSEUR");
     wattroff(fenetre,A_UNDERLINE);
     wrefresh(fenetre);
-    getch();
     sleep(2);
-    displayImmeuble(fenetre,ptr_immeuble);
 
+    displayImmeuble(fenetre,ptr_immeuble);
     wrefresh(fenetre);
-    getch();
     sleep(1);
 
+    wattron(fenetre,A_ITALIC);
+    mvwprintw(fenetre,LINES-2,1,"Entrer un n° d'étage");
+    mvwprintw(fenetre,LINES-1,1,"Entrer q pour quitter");
+    wattroff(fenetre,A_ITALIC);
+    wrefresh(fenetre);
+
     /*** LANCEMENT DE L'AUTOMATE ***/
-    bool run = false;
+    bool run = true;
     while(run){
         int input = wgetch(fenetre);
         if(input == 'q'){
@@ -88,17 +92,28 @@ int main() {
             if((0 <= destination) & (destination < NBREDETAGES)){
 
                 /** Activation de l'ascenseur **/
-                wclear(fenetre);
+                
                 int taille_dest = (int)strlen("Destination : 0 ");
                 mvwprintw(fenetre,LINES-2,COLS-1-taille_dest,"Destination : %d ",destination);
-                /*displayImmeuble(ptr_immeuble);
-                wrefresh(fenetre);*/
+                wrefresh(fenetre);
 
                 ptr_ascenseur->destination = destination;
-                /*while(ptr_ascenseur->etageActuel != ptr_ascenseur->destination){
-                    transporter(ptr_ascenseur);
+                while(ptr_ascenseur->etageActuel != ptr_ascenseur->destination){
+                    
+                    if(ptr_ascenseur->etageActuel < destination){
+                        ptr_ascenseur->etageActuel += 1;
+                    }
+                    else{
+                        ptr_ascenseur->etageActuel -= 1;
+                    }
+                    displayAscenseur(fenetre,ptr_immeuble);
+                    wrefresh(fenetre);
+                    sleep(1);
                 }
+                displayAscenseur(fenetre,ptr_immeuble);
+                wrefresh(fenetre);
 
+                /*
                 sortirDelAscenseur(ptr_ascenseur);
 
                 ptr_immeuble->ascenseur = ptr_ascenseur;

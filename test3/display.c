@@ -24,6 +24,14 @@ void displayListeDePersonnes(WINDOW *fenetre,int etage,int colomne,ListeDePerson
 }
 
 void displayAscenseur(WINDOW *fenetre,Immeuble *immeuble){
+
+    /** NETTOYAGE DE L ESPACE DEDIE A L ASCENSEUR **/
+    for(int i=0;i<immeuble->nbredEtages;i++){
+        mvwprintw(fenetre,4+i,(COLS/2)-12,"                      ");
+    }
+    wrefresh(fenetre);
+
+    /** AFFICHAGE DE L ASCENSEUR ACTUALISE **/
     int etage_sup = immeuble->nbredEtages -1;
     int etage_actuel = immeuble->ascenseur->etageActuel;
     int niveau = 4+etage_sup-etage_actuel;
