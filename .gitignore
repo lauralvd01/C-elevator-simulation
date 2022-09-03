@@ -1,10 +1,3 @@
-.vscode/configurationCache.log
-.vscode/dryrun.log
-.vscode/settings.json
-.vscode/targets.log
-.vscode/tasks.json
-test3/.vscode/configurationCache.log
-test3/.vscode/dryrun.log
-test3/.vscode/settings.json
-test3/.vscode/targets.log
-test3/.vscode/tasks.json
+/.vscode/
+/obj/
+
