@@ -1,0 +1,9 @@
+{
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/lvd68/Documents/Projet_SimulationAscenseur",
+            "binaryPath": "/home/lvd68/Documents/Projet_SimulationAscenseur/demo",
+            "binaryArgs": []
+        }
+    ]
+}
