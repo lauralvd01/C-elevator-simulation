@@ -16,6 +16,7 @@
 /** Déclaration des pointeurs **/
 ListeDePersonnes *ptr_fin;
 Ascenseur *ptr_ascenseur;
+/* tableau de pointeurs Liste de personnes pour chaque étage */
 ListeDePersonnes **ptr_enAttente;
 Immeuble *ptr_immeuble;
 
@@ -59,8 +60,23 @@ int main() {
     sleep(2);
 
     WINDOW *fenetre = newwin(LINES, COLS, 0, 0);
+    wattron(fenetre,A_UNDERLINE);
+    mvwprintw(fenetre,1, (COLS / 2) - 13,"SIMULATION D'UN ASCENSEUR");
+    wattroff(fenetre,A_UNDERLINE);
+    mvwprintw(fenetre,3,10,"Le programme simule le comportement d'un ascenceur");
+    mvwprintw(fenetre,4,10,"Une fois le chargement des personnes qui attendent l'ascenseur à chaque étage");
+    mvwprintw(fenetre,5,10,"Saisir l'étage à laquelle vous souhaitez que l'ascenseur s'arrête");
+    mvwprintw(fenetre,6,10,"Le programme réalise les étapes suivantes:");
+    mvwprintw(fenetre,7,10,"- il ammène l ascenceur à l étage sélectionné");
+    mvwprintw(fenetre,8,10,"- il fait descendre les personnes concernées");
+    mvwprintw(fenetre,9,10,"- il fait rentrer les nouveaux arrivants");
+    mvwprintw(fenetre,10,10,"Le programme attend une nouvelle saisie de l'étage.");
+    mvwprintw(fenetre,LINES-1,1,"tapez <SPACE> pour lancer la simulation");
+    
     wrefresh(fenetre);
-    getch();
+    int input = wgetch(fenetre);
+    /*getch();*/
+    wclear(fenetre);
 
     wattron(fenetre,A_UNDERLINE);
     mvwprintw(fenetre,1, (COLS / 2) - 13,"SIMULATION D'UN ASCENSEUR");
