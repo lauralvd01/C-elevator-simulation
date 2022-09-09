@@ -76,7 +76,7 @@ void ViewW(WINDOW *fenetre, int offset,pile *p)
     int i=offset;
     while(p)
         {
-            mvwprintw(fenetre,i,0,">pers[dep=%d,dest=%d,actu=%d][etat=%d][Hdep=%d]\n",p->pers_etagedep,p->pers_etagedest,p->pers_etageactu,p->pers_etat,p->pers_heuredep);
+            mvwprintw(fenetre,i,0,">pers[dep=%d,dest=%d,actu=%d][etat=%d][Hdep=%d]",p->pers_etagedep,p->pers_etagedest,p->pers_etageactu,p->pers_etat,p->pers_heuredep);
             i++;
             p = p->prec;
         }
@@ -90,7 +90,8 @@ void ViewW(WINDOW *fenetre, int offset,pile *p)
 void sortirDelAscenseur(pile **p,int etagesorti) /* **p car modifié */
 {
     /* Observe une à une les personnes transportées par l'ascenseur de l'immeuble et les efface de la liste si elles souhaitent sortir à l'étage atteint*/
-    //pile *tmp = *p;
+    pile *ptr;
+    ptr = (*p);
     while(*p)
         {
             if (((*p)->pers_etageactu == etagesorti) && ((*p)->pers_etat==ETAT_DANSASCENSEUR))
@@ -99,21 +100,17 @@ void sortirDelAscenseur(pile **p,int etagesorti) /* **p car modifié */
             }
             *p = (*p)->prec;
         }
-    //*p = *tmp; /* Le pointeur pointe sur le dernier élément. */
+    *p = ptr; /* Le pointeur pointe sur le dernier élément. */
 }
 /*************************************************************************/
 /* on ne fait entrer que les gens qui sont à l'étage actuel et qui veulent aller à l'étage cible */
-void entrerDanslAscenseur(WINDOW *f,pile **p,int etageactuel,int etagecible,int capacite) /* **p car modifié */
+void entrerDanslAscenseur(pile **p,int etageactuel,int etagecible,int capacite) /* **p car modifié */
 {
     /* Fait entrer dans l'ascenseur autant de personnes en attente à l'étage atteint qu'il y a de place */
     pile *ptr;
     ptr = (*p);
-
-wrefresh(f);
     while((*p))
         {
-mvwprintw(f,0,80,"tentrerdsascenseur vers cible %d et etat (%d)",etagecible,(*p)->pers_etat);  
-wrefresh(f);
             if (((*p)->pers_etagedep == etageactuel && (*p)->pers_etagedest == etagecible) && ((*p)->pers_etat==ETAT_ENATTENTE))
             {
                 (*p)->pers_etat=ETAT_DANSASCENSEUR;
@@ -121,14 +118,14 @@ wrefresh(f);
             }
             *p = (*p)->prec;
         }
-        *p = ptr;
-    /* Le pointeur pointe sur le dernier élément. */
+    *p = ptr; /* Le pointeur pointe sur le dernier élément. */
 }
 /*************************************************************************/
 void MonterAveclAscenseur(pile **p,int etageascenceur) /* **p car modifié */
 {
     /* Fait entrer dans l'ascenseur autant de personnes en attente à l'étage atteint qu'il y a de place */
-    //pile *tmp = *p;
+    pile *ptr;
+    ptr = (*p);
     while(*p)
         {
             if ((*p)->pers_etat==ETAT_DANSASCENSEUR)
@@ -137,7 +134,7 @@ void MonterAveclAscenseur(pile **p,int etageascenceur) /* **p car modifié */
             }
             *p = (*p)->prec;
         }
-    //*p = *tmp; /* Le pointeur pointe sur le dernier élément. */
+    *p = ptr; /* Le pointeur pointe sur le dernier élément. */
 }
 
 /******     FONCTIONS DE GESTION DE L'AFFICHAGE    *******/
@@ -184,20 +181,29 @@ void displayCacheLigneCommandes(WINDOW *fenetre)
 /*************************************************************************/
 void displayListeDePersonnes(WINDOW *fenetre,int etage,int colomne,pile* p,enum etat etatpers)
 {
+    int px= colomne+20+etatpers*20;
+
     while(p)
     {
+
+        // BUG
+        
+
         if (p->pers_etat==etatpers && p->pers_etageactu==etage)
         {
             /* Affiche la première personne de la liste telle que (12) si 1 est son départ et 2 son arrivée */
-            mvwprintw(fenetre,etage,colomne,"(%d%d)",p->pers_etagedep,p->pers_etagedest);
+mvwprintw(fenetre,etage,px,"X");px++;
+   wrefresh(fenetre);          
+            mvwprintw(fenetre,etage,colomne+50,"(%d%d)",p->pers_etagedep,p->pers_etagedest);
             /* On poursuit en affichant la suite de la liste, jusqu'à la fin */
             colomne = colomne + 4;
         }
         p = p->prec;
     }
+    wrefresh(fenetre);
 }
 /*************************************************************************/
-void displayAscenseur(WINDOW *fenetre,Immeuble *immeuble,pile *p){
+void displayAscenseur(WINDOW *fenetre,Immeuble *immeuble,pile **p){
 
     /** NETTOYAGE DE L ESPACE DEDIE A L ASCENSEUR **/
     for(int i=0;i<immeuble->nbredEtages;i++){
@@ -211,16 +217,17 @@ void displayAscenseur(WINDOW *fenetre,Immeuble *immeuble,pile *p){
     int niveau = 4+etage_sup-etage_actuel;
 
     mvwprintw(fenetre,niveau,(COLS/2)-11,"[");
-    displayListeDePersonnes(fenetre,niveau,(COLS/2)-9,p,ETAT_DANSASCENSEUR);
+    displayListeDePersonnes(fenetre,niveau,(COLS/2)-9,*p,ETAT_DANSASCENSEUR);
     if(etage_actuel == immeuble->ascenseur->etageDest){
         mvwprintw(fenetre,niveau,(COLS/2)+8,"[");
     }
     else{
         mvwprintw(fenetre,niveau,(COLS/2)+8,"]");
     }
+    wrefresh(fenetre);
 }
 /*************************************************************************/
-void displayImmeuble(WINDOW *fenetre,Immeuble *immeuble, pile *p)
+void displayImmeuble(WINDOW *fenetre,Immeuble *immeuble, pile **p)
 {
     int etage_sup = immeuble->nbredEtages -1;
     int demi_largeurAscenseur = (immeuble->ascenseur->capacite)*3;
@@ -232,7 +239,7 @@ void displayImmeuble(WINDOW *fenetre,Immeuble *immeuble, pile *p)
     int taille = (int)strlen(msg)-2;
     wattron(fenetre,A_BOLD);
     mvwprintw(fenetre, 3, bord_gauche - taille+1,msg);
-    mvwprintw(fenetre, 3, bord_droit,"|  En attente\n");
+    mvwprintw(fenetre, 3, bord_droit,"|  En attente");
     wattroff(fenetre,A_BOLD);
     
     for(int i=0;i<=etage_sup;i++){
@@ -241,10 +248,10 @@ void displayImmeuble(WINDOW *fenetre,Immeuble *immeuble, pile *p)
         mvwprintw(fenetre,4+i,bord_gauche,"|");
         mvwprintw(fenetre,4+i,bord_droit,"|                         ");
 
-        displayListeDePersonnes(fenetre,4+i,bord_droit+2,p,ETAT_ENATTENTE);
+        displayListeDePersonnes(fenetre,4+i,bord_droit+2,*p,ETAT_ENATTENTE);
     }
-
     displayAscenseur(fenetre,immeuble,p);
+    wrefresh(fenetre);
 }
 
 /******     FONCTIONS DE CREATION ASCENCEUR ET IMMEUBLE    *******/
@@ -315,7 +322,7 @@ int main()
     wrefresh(fenetre);
     sleep(1);
 
-    displayImmeuble(fenetre,ptr_immeuble,PilePers);
+    displayImmeuble(fenetre,ptr_immeuble,&PilePers);
     wrefresh(fenetre);
     sleep(1);   
 
@@ -326,6 +333,8 @@ int main()
     {
         displayHeureActuelle(fenetre,heureActuelle);
         displayAfficheLigneCommandes(fenetre);
+ViewW(fenetre,3,PilePers);
+wrefresh(fenetre);
 int input = wgetch(fenetre);
 //int input = 2;
         displayCacheLigneCommandes(fenetre);
@@ -347,7 +356,7 @@ mvwprintw(fenetre,LINES-3,0,"Nouvel arrivant : %d -> %d ",tabPersArrivants[i][1]
 wrefresh(fenetre);
             }
         }
-        displayImmeuble(fenetre,ptr_immeuble,PilePers);
+        displayImmeuble(fenetre,ptr_immeuble,&PilePers);
         wrefresh(fenetre);
 mvwprintw(fenetre,0,0,"taille pile= %d     ",Length(PilePers)); 
 wrefresh(fenetre);
@@ -356,9 +365,8 @@ wrefresh(fenetre);
         /* on vérifie que la saisie clavier correspond bien à un étage */
         if((0 <= etageCible) & (etageCible < NBREDETAGES)){
             /* ALGO ACTUEL : on ne fait rentrer dans l'ascenceur que les personnes qui vont à l'étage cible */
-            entrerDanslAscenseur(fenetre,&PilePers,ptr_ascenseur->etageActuel,etageCible,ptr_ascenseur->capacite);
-ViewW(fenetre,3,PilePers);
-wrefresh(fenetre);
+            entrerDanslAscenseur(&PilePers,ptr_ascenseur->etageActuel,etageCible,ptr_ascenseur->capacite);
+
             /** Activation de l'ascenseur **/
             int taille_dest = (int)strlen("Destination : 0 ");
 mvwprintw(fenetre,LINES-2,COLS-1-taille_dest,"Destination : %d ",etageCible);
@@ -372,21 +380,22 @@ wrefresh(fenetre);
 mvwprintw(fenetre,1,1,"etage actu asc=%d sens=%d",ptr_ascenseur->etageActuel,sens);
 wrefresh(fenetre);
                 
-                //MonterAveclAscenseur(&PilePers,ptr_ascenseur->etageActuel);
-ViewW(fenetre,10,PilePers);
-                displayAscenseur(fenetre,ptr_immeuble,PilePers);
+                MonterAveclAscenseur(&PilePers,ptr_ascenseur->etageActuel);
+
+sleep(1);
+                displayAscenseur(fenetre,ptr_immeuble,&PilePers);
                 wrefresh(fenetre);
                 sleep(1);
             }
 mvwprintw(fenetre,1,1,"etage actu asc=%d arrivé       ",ptr_ascenseur->etageActuel);
 wrefresh(fenetre);
 
-            displayAscenseur(fenetre,ptr_immeuble,PilePers);
+            displayAscenseur(fenetre,ptr_immeuble,&PilePers);
             wrefresh(fenetre);
             sleep(1);
 
-            //sortirDelAscenseur(&PilePers,etageCible);
-            displayAscenseur(fenetre,ptr_immeuble,PilePers);
+            sortirDelAscenseur(&PilePers,etageCible);
+            displayAscenseur(fenetre,ptr_immeuble,&PilePers);
             wrefresh(fenetre);
             sleep(1);
 

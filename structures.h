@@ -42,8 +42,8 @@ Immeuble* creerImmeuble(int nbre_etages, Ascenseur *ascenseur);
 
 /** Fonctions d'affichage **/
 void displayListeDePersonnes(WINDOW *fenetre,int etage,int colomne,pile* p,enum etat etatpers);
-void displayAscenseur(WINDOW *fenetre,Immeuble *immeuble,pile *p);
-void displayImmeuble(WINDOW *fenetre,Immeuble *immeuble, pile *p);
+void displayAscenseur(WINDOW *fenetre,Immeuble *immeuble,pile **p);
+void displayImmeuble(WINDOW *fenetre,Immeuble *immeuble, pile **p);
 void displayHeureActuelle(WINDOW *fenetre,int heure);
 void displayAfficheLigneCommandes(WINDOW *fenetre);
 void displayCacheLigneCommandes(WINDOW *fenetre);
