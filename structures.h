@@ -3,54 +3,54 @@
 
 #include<ncurses.h>
 
-typedef struct _Personne {
-    /* Une personne est définie par ses étages de départ et de destination */
-    int depart;
-    int arrivee;
-} Personne;
+enum etat { ETAT_OUTSIDE, ETAT_ENATTENTE, ETAT_DANSASCENSEUR, ETAT_SORTI };
 
-typedef struct _ListeDePersonnes {
-    /* Une liste de personnes est une liste chaînée définie par sa longueur, par un pointeur tête pointant sur une personne et par un pointeur queue pointant sur la suite de la liste
-       La fin de la liste chaînée est caractérisée par une longueur valant 0 et les pointeurs tête et queue pointant sur NULL */
-    int longueur;
-    Personne *tete;
-    struct _ListeDePersonnes *queue;
-} ListeDePersonnes;
+ /*  Structure représentant un élément de la pile. */
+typedef struct pile
+{
+        int pers_etagedep;
+        int pers_etagedest;
+        int pers_etageactu;
+        int pers_heuredep;
+        enum etat pers_etat;
+        struct pile *prec;
+} pile ;
 
 typedef struct _Ascenseur {
-    /* Un ascenseur est défini par sa capacité, l'étage auquel il se trouve, sa prochaine destination, et un pointeur transportés pointant sur une liste de personnes */
     int capacite;
     int etageActuel;
-    int destination;
-    ListeDePersonnes *transportes;
+    int etageDest;
 } Ascenseur;
 
 typedef struct _Immeuble {
     /* Un immeuble est défini par son nombre d'étages, un ascenseur, et un double pointeur enAttente qui correspond à un tableau de pointeurs pointant chacun sur une liste de personnes (une liste par étage) */
     int nbredEtages; /* NBREDETAGES = 5 => 4 étages et 1 rez-de-chaussée */
     Ascenseur *ascenseur;
-    ListeDePersonnes **enAttente;
 } Immeuble;
 
+/** Fonctions de gestion de la pile de personnes **/
+void Push(pile **, int,int,int,enum etat);    /*  Push empile une valeur sur la pile. */
+void Pop(pile **);                  /*  Pop retire la dernière valeur empilée sur la pile. */
+void Clear(pile **);                /*  Clear vide la pile. */
+int Length(pile *p);                /*  Length retourne le nombre d'éléments de la pile. */
+void View(pile *);                  /*  Affiche la totalité de la pile en commençant par le sommet. */
+void ViewW(WINDOW *fenetre,int offset, pile *p);
 
 /** Fonctions de création **/
-Personne* creerPersonne(int dep, int dest);
-ListeDePersonnes* insererPersonneListe(Personne *new_personne, ListeDePersonnes *liste);
-ListeDePersonnes* insererPersonneFile(ListeDePersonnes *liste,Personne *personne);
-Ascenseur* creerAscenseur(int capacite, int etage_actuel,ListeDePersonnes *personnnes_dedans);
-Immeuble* creerImmeuble(int nbre_etages, Ascenseur *ascenseur, ListeDePersonnes **en_attente);
+Ascenseur* creerAscenseur(int capacite, int etage_actuel);
+Immeuble* creerImmeuble(int nbre_etages, Ascenseur *ascenseur);
 
 /** Fonctions d'affichage **/
-void displayListeDePersonnes(WINDOW *fenetre,int etage,int colomne,ListeDePersonnes* liste);
-void displayAscenseur(WINDOW *fenetre,Immeuble *immeuble);
-void displayImmeuble(WINDOW *fenetre,Immeuble *immeuble);
+void displayListeDePersonnes(WINDOW *fenetre,int etage,int colomne,pile* p,enum etat etatpers);
+void displayAscenseur(WINDOW *fenetre,Immeuble *immeuble,pile *p);
+void displayImmeuble(WINDOW *fenetre,Immeuble *immeuble, pile *p);
+void displayHeureActuelle(WINDOW *fenetre,int heure);
+void displayAfficheLigneCommandes(WINDOW *fenetre);
+void displayCacheLigneCommandes(WINDOW *fenetre);
 
 /** Fonctionnement de l'ascenseur **/
-int tousSatisfaits(ListeDePersonnes **en_attente);
-/*int determinateDestination(Immeuble *building);*/
-/*Immeuble* moove(Immeuble *building,int destination);*/
-void sortirDelAscenseur(Immeuble *ptr_immeuble);
-void entrerDanslAscenseur(WINDOW *fenetre,Immeuble *immeuble);
-
+void sortirDelAscenseur(pile **p,int etagesorti);
+void entrerDanslAscenseur(WINDOW *f,pile **p,int etageactuel,int etagecible, int capacite);
+void MonterAveclAscenseur(pile **p,int etageascenceur);
 
 #endif
