@@ -50,7 +50,7 @@ void displayCacheLigneCommandes(WINDOW *fenetre);
 
 /** Fonctionnement de l'ascenseur **/
 void sortirDelAscenseur(pile **p,int etagesorti);
-void entrerDanslAscenseur(WINDOW *f,pile **p,int etageactuel,int etagecible, int capacite);
+void entrerDanslAscenseur(pile **p,int etageactuel,int etagecible, int capacite);
 void MonterAveclAscenseur(pile **p,int etageascenceur);
 
 #endif
