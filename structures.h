@@ -5,6 +5,8 @@
 
 enum etat { ETAT_OUTSIDE, ETAT_ENATTENTE, ETAT_DANSASCENSEUR, ETAT_SORTI };
 
+enum etatporte { PORTE_SOUVRE, PORTE_OUVERTE, PORTE_SEFERME, PORTE_FERMEE };
+
  /*  Structure représentant un élément de la pile. */
 typedef struct pile
 {
@@ -20,6 +22,7 @@ typedef struct _Ascenseur {
     int capacite;
     int etageActuel;
     int etageDest;
+    enum etatporte porte;
 } Ascenseur;
 
 typedef struct _Immeuble {
@@ -41,12 +44,11 @@ Ascenseur* creerAscenseur(int capacite, int etage_actuel);
 Immeuble* creerImmeuble(int nbre_etages, Ascenseur *ascenseur);
 
 /** Fonctions d'affichage **/
-void displayListeDePersonnes(WINDOW *fenetre,int etage,int colomne,pile* p,enum etat etatpers);
-void displayAscenseur(WINDOW *fenetre,Immeuble *immeuble,pile **p);
-void displayImmeuble(WINDOW *fenetre,Immeuble *immeuble, pile **p);
 void displayHeureActuelle(WINDOW *fenetre,int heure);
 void displayAfficheLigneCommandes(WINDOW *fenetre);
 void displayCacheLigneCommandes(WINDOW *fenetre);
+void displayScene(WINDOW *fenetre,Immeuble *immeuble, pile *p);
+void animAscenceur(WINDOW *fenetre, Immeuble *immeuble, enum etatporte action);
 
 /** Fonctionnement de l'ascenseur **/
 void sortirDelAscenseur(pile **p,int etagesorti);
