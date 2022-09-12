@@ -4,10 +4,10 @@ run :
 	./demo
 
 demo: main.o
-	gcc -o demo main.o -lncurses
+	gcc -o demo obj/main.o -lncurses
 
 main.o: main.c structures.h
-	gcc -o main.o -c main.c -lncurses
+	gcc -o obj/main.o -c main.c -lncurses
 
 clean:
-	rm -rf demo *.o
+	rm -rf demo obj/*.o

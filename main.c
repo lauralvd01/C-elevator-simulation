@@ -9,7 +9,7 @@
 
 #include<assert.h>
 
-#define NBREDETAGES 5 /* NBREDETAGES = 5 => 4 étages et 1 rez-de-chaussée */
+#define NBREDETAGES 8 /* NBREDETAGES = 8 => 7 étages et 1 rez-de-chaussée */
 #define CAPACITE_MAX 4 /* Capatié de l'ascenseur */
 #define DEPART 0 /* Point dde départ de l'ascenseur */
 #define NOMBRE_MAX_ARRIVANTS 30
@@ -80,9 +80,14 @@ void View(pile *p)
 void ViewW(WINDOW *fenetre, int offset,pile *p)
 {
     int i=offset;
+    wclear(fenetre);
+    wattron(fenetre,A_UNDERLINE);
+    mvwprintw(fenetre,1, (COLS / 2) - 13,"SIMULATION D'UN ASCENSEUR");
+    mvwprintw(fenetre,0, 1,"Nombre total de personnes: %d",Length(p));
+    wattroff(fenetre,A_UNDERLINE);
     while(p)
         {
-            mvwprintw(fenetre,i,0,">pers[dep=%d,dest=%d,actu=%d][etat=%d][Hdep=%d]",p->pers_etagedep,p->pers_etagedest,p->pers_etageactu,p->pers_etat,p->pers_heuredep);
+            mvwprintw(fenetre,i,0,">pers[8h:%d][%d => %d][et.:%d]",p->pers_heuredep,p->pers_etagedep,p->pers_etagedest,p->pers_etageactu);
             i++;
             p = p->prec;
         }
@@ -165,16 +170,17 @@ void displayEcranIntroduction(WINDOW *fenetre)
     int input = wgetch(fenetre);
 }
 /*************************************************************************/
-void displayHeureActuelle(WINDOW *fenetre, int heure)
+void displayHeureActuelle(WINDOW *fenetre, int heure,int nb)
 {
-    mvwprintw(fenetre,LINES-4,COLS/2-3,"HEURE: %i",heure);
+    char *st = nb>1 ? "s":"";
+    mvwprintw(fenetre,LINES-3,COLS/2-20,"Il est 8 h%d mn, arrivée de %d nouvelle%s personne%s.          ",heure,nb,st,st);
     wrefresh(fenetre);
 }
 /*************************************************************************/
 void displayAfficheLigneCommandes(WINDOW *fenetre)
 {
     wattron(fenetre,A_ITALIC);
-    mvwprintw(fenetre,LINES-1,1,"Entrer un n° d'étage (q pour quitter):");
+    mvwprintw(fenetre,LINES-1,1,"Entrer un n° d'étage (i pour infos, q pour quitter):");
     wattroff(fenetre,A_ITALIC);
     wrefresh(fenetre);
 }
@@ -182,7 +188,8 @@ void displayAfficheLigneCommandes(WINDOW *fenetre)
 void displayCacheLigneCommandes(WINDOW *fenetre)
 {
     wattron(fenetre,A_ITALIC);
-    mvwprintw(fenetre,LINES-1,1,"                                        ");
+    /* on efface la ligne */
+    wmove(fenetre,LINES-1,1); wclrtoeol(fenetre);
     wattroff(fenetre,A_ITALIC);
     wrefresh(fenetre);
 }
@@ -261,39 +268,41 @@ void animAscenceur(WINDOW *fenetre, Immeuble *immeuble, enum etatporte action)
     int demi_largeurAscenseur = (immeuble->ascenseur->capacite)*3;
     int bord_gauche = (COLS / 2) -2 -demi_largeurAscenseur;
     int bord_droit = (COLS / 2) + demi_largeurAscenseur;
-    int y=1+4+etage_sup; /* calcul ligne à l'écran */
-    
+    int y=3+4+etage_sup; /* calcul ligne à l'écran */
+    mvwprintw(fenetre,y-1,(COLS/2)-4,"[  %d  ]  ",immeuble->ascenseur->etageActuel);
     switch (action)
     {
         case PORTE_SOUVRE :
         case PORTE_OUVERTE :
-            for (int i=0;i<demi_largeurAscenseur;i++) {
+            for (int i=0;i<demi_largeurAscenseur;i++) 
+            {
                 mvwprintw(fenetre,y,(COLS/2)-i," ");
                 mvwprintw(fenetre,y,(COLS/2)+i-1," ");
                 if (action==PORTE_SOUVRE)
                 {
                     wrefresh(fenetre);
-                    msleep(50);
+                    msleep(100);
                 }
             }
             break;
         case PORTE_SEFERME :
         case PORTE_FERMEE :
-            for (int i=demi_largeurAscenseur-1;i>=0;i--) {
+            for (int i=demi_largeurAscenseur-1;i>=0;i--) 
+            {
                 mvwprintw(fenetre,y,(COLS/2)-i,"H");
                 mvwprintw(fenetre,y,(COLS/2)+i-1,"H");
                 if (action==PORTE_SEFERME)
                 {
                     wrefresh(fenetre);
-                    msleep(50);
+                    msleep(100);
                 }
-               
             }
             wrefresh(fenetre);
             break;
         
     }
 }
+/*************************************************************************/
 
 
 /******     FONCTIONS DE CREATION ASCENCEUR ET IMMEUBLE    *******/
@@ -340,9 +349,9 @@ int main()
     /* tableau des personnes arrivants pour prendre l'ascenseur pour chaque personne [1 ligne][heurearrivee,etagedepart,etagearrivee] */
     /* si fin du tableau => alors {-1,-1,-1} */
     /* L'utilité dans le tableau du paramètre heure est que l'on peut pour la même heure ajouter plusieurs personnes */
-    int tabPersArrivants[NOMBRE_MAX_ARRIVANTS][3] = { {0,0,2}, {0,4,0}, {1,2,0}, {2,3,0}, {3,0,4}, {4,4,0},
-     {5,0,3}, {5,0,3}, {6,1,0}, {7,3,0}, {7,0,2}, {8,3,0},
-     {8,0,2}, {9,4,0}, {10,2,0}, {10,3,0}, {11,3,0}, {-1,-1,-1}};
+    int tabPersArrivants[NOMBRE_MAX_ARRIVANTS][3] = { {0,0,2}, {0,4,0}, {1,2,0}, {2,3,0}, {3,0,7}, {4,6,0},
+     {5,0,5}, {5,0,5}, {6,8,0}, {7,2,0}, {7,0,4}, {8,5,0},
+     {8,0,3}, {9,4,0}, {10,2,0}, {10,6,0}, {11,3,0}, {-1,-1,-1}};
     int nbreTotArrivants=0;
     for (int i=0;i<NOMBRE_MAX_ARRIVANTS && tabPersArrivants[i][0]>-1;i++)
         nbreTotArrivants++;
@@ -369,19 +378,18 @@ int main()
     /*displayImmeuble(fenetre,ptr_immeuble,&PilePers);*/
     
 
-    int heureActuelle=0; 
+    int heureActuelle=0;
+    bool showinfo = FALSE;
 
     /*** LANCEMENT DE L'AUTOMATE ***/
     while(heureActuelle<HEURE_MAX)
     {
-        
-ViewW(fenetre,3,PilePers);
-wrefresh(fenetre);
-
+        int nb=0;
         /* gestion des arrivants en fonction de l'heure*/
         /* on ajoute dans la pile que les gens si l'heure actuelle est leur heure d'arrivée */
         mvwprintw(fenetre,LINES-3,COLS/2-5,"                          ");  
         wrefresh(fenetre);
+        nb=0;
         for (int i=0;i<nbreTotArrivants;i++) /* tableau limité au nombre exact d'arrivants */
         {
             int heureArrivant = tabPersArrivants[i][0];
@@ -390,22 +398,19 @@ wrefresh(fenetre);
             {
                 /* on ajoute à la pile le nouvel arrivant son état devient : EN ATTENTE */
                 Push(&PilePers,tabPersArrivants[i][1],tabPersArrivants[i][2],heureArrivant,ETAT_ENATTENTE);
-mvwprintw(fenetre,LINES-3,0,"Nouvel arrivant : %d -> %d ",tabPersArrivants[i][1],tabPersArrivants[i][2]);
-wrefresh(fenetre);
+                nb++;
             }
         }
-        /*displayImmeuble(fenetre,ptr_immeuble,&PilePers);
-        wrefresh(fenetre);*/
-mvwprintw(fenetre,0,0,"taille pile= %d     ",Length(PilePers)); 
-wrefresh(fenetre);
-
-        displayHeureActuelle(fenetre,heureActuelle);
+        if (showinfo) ViewW(fenetre,3,PilePers);
+        displayHeureActuelle(fenetre,heureActuelle,nb);
+        animAscenceur(fenetre, ptr_immeuble, PORTE_FERMEE);
         displayScene(fenetre,ptr_immeuble,PilePers);
         wrefresh(fenetre);
         sleep(1);
         displayAfficheLigneCommandes(fenetre);
         int input = wgetch(fenetre);
         displayCacheLigneCommandes(fenetre);
+        if(input=='i') showinfo = !showinfo; 
         if(input == 'q') break;
         int etageCible = input - '0'; /*input envoi le code du caractère ascii moins le code caractère ascii'0' cela se traduit par le bon chiffre */  
         /* on vérifie que la saisie clavier correspond bien à un étage */
@@ -421,28 +426,16 @@ wrefresh(fenetre);
             ptr_ascenseur->porte = PORTE_FERMEE;
 
             /** Démarrage de l'ascenseur **/
-            int taille_dest = (int)strlen("Destination : 0 ");
-
-mvwprintw(fenetre,LINES-2,COLS-1-taille_dest,"Destination : %d ",etageCible);
-wrefresh(fenetre);
-
             ptr_ascenseur->etageDest = etageCible;
             int sens = (ptr_ascenseur->etageActuel < etageCible) ? +1 : -1;
             while(ptr_ascenseur->etageActuel != ptr_ascenseur->etageDest)
             { /* Transport de l'ascenseur jusqu'à la destination (pas d'arrêt aux étages entre temps) */
                 ptr_ascenseur->etageActuel = ptr_ascenseur->etageActuel + sens;
-
-mvwprintw(fenetre,1,1,"etage actu asc=%d sens=%d",ptr_ascenseur->etageActuel,sens);
-wrefresh(fenetre);
-
                 MonterAveclAscenseur(&PilePers,ptr_ascenseur->etageActuel);
+                animAscenceur(fenetre, ptr_immeuble, PORTE_FERMEE);
                 displayScene(fenetre,ptr_immeuble,PilePers);
                 sleep(1);
             }
-
-mvwprintw(fenetre,1,1,"etage actu asc=%d arrivé       ",ptr_ascenseur->etageActuel);
-wrefresh(fenetre);
-
             animAscenceur(fenetre, ptr_immeuble, PORTE_SOUVRE);
             ptr_ascenseur->porte = PORTE_OUVERTE;
             /* ALGO ACTUEL : on ne fait rentrer dans l'ascenceur que les personnes qui vont à l'étage cible */

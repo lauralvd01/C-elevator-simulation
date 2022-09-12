@@ -44,7 +44,7 @@ Ascenseur* creerAscenseur(int capacite, int etage_actuel);
 Immeuble* creerImmeuble(int nbre_etages, Ascenseur *ascenseur);
 
 /** Fonctions d'affichage **/
-void displayHeureActuelle(WINDOW *fenetre,int heure);
+void displayHeureActuelle(WINDOW *fenetre,int heure, int nb);
 void displayAfficheLigneCommandes(WINDOW *fenetre);
 void displayCacheLigneCommandes(WINDOW *fenetre);
 void displayScene(WINDOW *fenetre,Immeuble *immeuble, pile *p);
