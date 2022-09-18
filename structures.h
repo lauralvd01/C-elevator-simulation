@@ -3,9 +3,17 @@
 
 #include<ncurses.h>
 
+#define NBREDETAGES 8 /* NBREDETAGES = 8 => 7 étages et 1 rez-de-chaussée */
+#define CAPACITE_MAX 4 /* Capatié de l'ascenseur */
+#define DEPART 0 /* Point dde départ de l'ascenseur */
+#define NOMBRE_MAX_ARRIVANTS 30
+#define HEURE_MAX 100
+
 enum etat { ETAT_OUTSIDE, ETAT_ENATTENTE, ETAT_DANSASCENSEUR, ETAT_SORTI };
 
 enum etatporte { PORTE_SOUVRE, PORTE_OUVERTE, PORTE_SEFERME, PORTE_FERMEE };
+
+enum mode { MODE_AUTO, MODE_MANUEL };
 
  /*  Structure représentant un élément de la pile. */
 typedef struct pile
@@ -49,10 +57,17 @@ void displayAfficheLigneCommandes(WINDOW *fenetre);
 void displayCacheLigneCommandes(WINDOW *fenetre);
 void displayScene(WINDOW *fenetre,Immeuble *immeuble, pile *p);
 void animAscenceur(WINDOW *fenetre, Immeuble *immeuble, enum etatporte action);
+enum mode displayEcranIntroduction(WINDOW *fenetre);
 
-/** Fonctionnement de l'ascenseur **/
+/** Fonctionnement de l'ascenseur et immeuble **/
+Ascenseur* creerAscenseur(int capacite, int etage_actuel);
+Immeuble* creerImmeuble(int nbre_etages, Ascenseur *ascenseur);
 void sortirDelAscenseur(pile **p,int etagesorti);
 void entrerDanslAscenseur(pile **p,int etageactuel,int etagecible, int capacite);
 void MonterAveclAscenseur(pile **p,int etageascenceur);
+
+
+/** outils **/
+int msleep(unsigned int tms);
 
 #endif
