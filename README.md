@@ -1,2 +1,2 @@
-# Projet_SimulationAscenseur
-Projet de semaine de dep - 24/06/2022 - Laura Levraud
+# C Elevator simulation
+Projet de semaine d'introduction au département informatique - 24/06/2022 - Laura Levraud
